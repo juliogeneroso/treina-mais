@@ -158,8 +158,8 @@ export default function PersistentDrawerLeft() {
                     sx={{
                       mx: 2,
                       cursor: "pointer",
-                      color: isActive ? "#1976d2" : "inherit",
-                      fontWeight: isActive ? "300" : "normal",
+                      color: isActive ? "#1976d2" : "#a0aec0",
+                      fontWeight: isActive ? "400" : "normal",
                     }}
                   >
                     {page}
