@@ -22,7 +22,7 @@ import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import Grid from "@mui/material/Grid";
 import { Menu, MenuItem } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Badge, Avatar } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -32,28 +32,23 @@ const drawerWidth = 240;
 
 const pages = ["Dashboard", "Simulados", "Baralhos"];
 
-const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
-  open?: boolean;
-}>(({ theme }) => ({
+const Main = styled("main", {
+  shouldForwardProp: (prop) => prop !== "open",
+})<{ open?: boolean }>(({ theme, open }) => ({
   flexGrow: 1,
   padding: theme.spacing(3),
-  transition: theme.transitions.create("margin", {
+  transition: theme.transitions.create(["margin"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   marginLeft: `-${drawerWidth}px`,
-  variants: [
-    {
-      props: ({ open }) => open,
-      style: {
-        transition: theme.transitions.create("margin", {
-          easing: theme.transitions.easing.easeOut,
-          duration: theme.transitions.duration.enteringScreen,
-        }),
-        marginLeft: 0,
-      },
-    },
-  ],
+  ...(open && {
+    transition: theme.transitions.create(["margin"], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    marginLeft: 0,
+  }),
 }));
 
 interface AppBarProps extends MuiAppBarProps {
@@ -145,7 +140,7 @@ export default function PersistentDrawerLeft() {
           >
             <Box
               sx={{
-                display: "flex",
+                display: { xs: "none", sm: "none", md:"flex"},
                 alignItems: "center",
                 justifyContent: "center",
               }}
@@ -174,7 +169,7 @@ export default function PersistentDrawerLeft() {
             </Box>
           </Grid>
           <Grid sx={{
-              display: "flex",
+              display: { xs: "none", sm: "none", md:"flex"},
               alignItems: "center",
               justifyContent: "center",
             }}>
@@ -284,7 +279,9 @@ export default function PersistentDrawerLeft() {
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
-        <Typography sx={{ marginBottom: 2 }}>
+        <Box sx={{width: '100%'}}>
+        <Outlet/>
+         {/* <Typography sx={{ marginBottom: 2 }}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Rhoncus
           dolor purus non enim praesent elementum facilisis leo vel. Risus at
@@ -312,7 +309,8 @@ export default function PersistentDrawerLeft() {
           sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
           eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
           posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
+        </Typography> */}
+        </Box>
       </Main>
     </Box>
   );
