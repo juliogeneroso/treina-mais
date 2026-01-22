@@ -22,11 +22,12 @@ import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import Grid from "@mui/material/Grid";
 import { Menu, MenuItem } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { Badge, Avatar } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { Analytics, AutoAwesomeMotion, Dashboard, EditNote, Settings } from "@mui/icons-material";
 
 const drawerWidth = 240;
 
@@ -94,6 +95,7 @@ export default function PersistentDrawerLeft() {
   const navigate = useNavigate();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const isAdmin = true; // mudar aqui
   const [anchorNotif, setAnchorNotif] = React.useState<null | HTMLElement>(
     null
   );
@@ -110,7 +112,7 @@ export default function PersistentDrawerLeft() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open} color="transparent">
+      <AppBar position="fixed" open={open} color="default">
         <Grid
           container
           sx={{ display: "flex", justifyContent: "space-between" }}
@@ -257,34 +259,116 @@ export default function PersistentDrawerLeft() {
         </DrawerHeader>
         <Divider />
         <List>
-          {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
+          <ListItem key={"Dashboard"} disablePadding>
+              <ListItemButton   
+              component={NavLink}
+              to="/"
+              sx={{
+                "&.active": {
+                  bgcolor: "action.selected",
+                  borderRadius: 2,
+                  mx: 1,
+                },
+              }}>
                 <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  <Dashboard/>
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary={"Dashboard"} />
               </ListItemButton>
             </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {["All mail", "Trash", "Spam"].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
+            <ListItem key={"Simulados"} disablePadding>
+              <ListItemButton  
+              component={NavLink}
+              to="/simulados"
+              sx={{
+                "&.active": {
+                  bgcolor: "action.selected",
+                  borderRadius: 2,
+                  mx: 1,
+                },
+              }}>
                 <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  <EditNote/>
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary={"Simulados"} />
+              </ListItemButton >
+            </ListItem>
+            <ListItem key={"Flashcards"} disablePadding>
+              <ListItemButton  
+                component={NavLink}
+                to="/flashcard"
+                sx={{
+                  "&.active": {
+                    bgcolor: "action.selected",
+                    borderRadius: 2,
+                    mx: 1,
+                  },
+                }}>
+                <ListItemIcon>
+                  <AutoAwesomeMotion/>
+                </ListItemIcon>
+                <ListItemText primary={"Flashcards"} />
               </ListItemButton>
             </ListItem>
-          ))}
+              <ListItem key={"Desempenho"} disablePadding>
+              <ListItemButton  
+                component={NavLink}
+                to="/desempenho"
+                sx={{
+                  "&.active": {
+                    bgcolor: "action.selected",
+                    borderRadius: 2,
+                    mx: 1,
+                  },
+                }}>
+                <ListItemIcon>
+                  <Analytics/>
+                </ListItemIcon>
+                <ListItemText primary={"Desempenho"} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem key={"Configurações"} disablePadding>
+              <ListItemButton  
+                component={NavLink}
+                to="/configuracao"
+                sx={{
+                  "&.active": {
+                    bgcolor: "action.selected",
+                    borderRadius: 2,
+                    mx: 1,
+                  },
+                }}>
+                <ListItemIcon>
+                  <Settings/>
+                </ListItemIcon>
+                <ListItemText primary={"Configurações"} />
+              </ListItemButton>
+            </ListItem>
         </List>
+        {isAdmin && (
+        <>
+          <Divider>
+            <Typography>Opções Admin</Typography>
+          </Divider>
+          <List>
+            {["Perguntas", "Usuários", "Configuração"].map((text, index) => (
+              <ListItem key={text} disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  </ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </>
+      )}
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
-        <Typography sx={{ marginBottom: 2 }}>
+        <Outlet/>
+       {/*  <Typography sx={{ marginBottom: 2 }}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Rhoncus
           dolor purus non enim praesent elementum facilisis leo vel. Risus at
@@ -312,7 +396,7 @@ export default function PersistentDrawerLeft() {
           sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
           eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
           posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
+        </Typography> */}
       </Main>
     </Box>
   );
