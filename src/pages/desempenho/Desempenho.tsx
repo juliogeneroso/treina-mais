@@ -239,7 +239,6 @@ export default function Desempenho() {
             </Box>
           </Box>
 
-          {/* Subtítulo */}
           <Typography
             fontSize={13}
             color="text.secondary"
@@ -248,7 +247,6 @@ export default function Desempenho() {
             {mat.questoes}
           </Typography>
 
-          {/* Progress */}
           <LinearProgress
             variant="determinate"
             value={mat.valor}

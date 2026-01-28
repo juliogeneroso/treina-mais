@@ -28,6 +28,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Analytics, AutoAwesomeMotion, Dashboard, EditNote, Settings } from "@mui/icons-material";
+import avatar_01 from '../../assets/avatar/avatar_01.png';
 
 const drawerWidth = 240;
 
@@ -204,7 +205,7 @@ export default function PersistentDrawerLeft() {
                 color="inherit"
                 onClick={(e) => setAnchorUser(e.currentTarget)}
               >
-                <Avatar sx={{ width: 32, height: 32 }}>J</Avatar>
+                <Avatar sx={{ width: 32, height: 32 }} src={avatar_01}>J</Avatar>
               </IconButton>
 
               <Menu
@@ -217,10 +218,10 @@ export default function PersistentDrawerLeft() {
                 <MenuItem
                   onClick={() => {
                     setAnchorUser(null);
-                    navigate("/settings");
+                    navigate("/configuracoes");
                   }}
                 >
-                  <SettingsIcon sx={{ fontSize: 18, mr: 1 }} /> Settings
+                  <SettingsIcon sx={{ fontSize: 18, mr: 1 }} /> Configurações
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
@@ -228,7 +229,7 @@ export default function PersistentDrawerLeft() {
                     navigate("/logout");
                   }}
                 >
-                  <LogoutIcon sx={{ fontSize: 18, mr: 1 }} /> Disconnect
+                  <LogoutIcon sx={{ fontSize: 18, mr: 1 }} /> Sair
                 </MenuItem>
               </Menu>
             </Box>
@@ -279,7 +280,7 @@ export default function PersistentDrawerLeft() {
             <ListItem key={"Simulados"} disablePadding>
               <ListItemButton  
               component={NavLink}
-              to="/simulados"
+              to="/simulado/2"
               sx={{
                 "&.active": {
                   bgcolor: "action.selected",
@@ -368,35 +369,6 @@ export default function PersistentDrawerLeft() {
       <Main open={open}>
         <DrawerHeader />
         <Outlet/>
-       {/*  <Typography sx={{ marginBottom: 2 }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Rhoncus
-          dolor purus non enim praesent elementum facilisis leo vel. Risus at
-          ultrices mi tempus imperdiet. Semper risus in hendrerit gravida rutrum
-          quisque non tellus. Convallis convallis tellus id interdum velit
-          laoreet id donec ultrices. Odio morbi quis commodo odio aenean sed
-          adipiscing. Amet nisl suscipit adipiscing bibendum est ultricies
-          integer quis. Cursus euismod quis viverra nibh cras. Metus vulputate
-          eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo
-          quis imperdiet massa tincidunt. Cras tincidunt lobortis feugiat
-          vivamus at augue. At augue eget arcu dictum varius duis at consectetur
-          lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa sapien
-          faucibus et molestie ac.
-        </Typography>
-        <Typography sx={{ marginBottom: 2 }}>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est
-          ullamcorper eget nulla facilisi etiam dignissim diam. Pulvinar
-          elementum integer enim neque volutpat ac tincidunt. Ornare suspendisse
-          sed nisi lacus sed viverra tellus. Purus sit amet volutpat consequat
-          mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis
-          risus sed vulputate odio. Morbi tincidunt ornare massa eget egestas
-          purus viverra accumsan in. In hendrerit gravida rutrum quisque non
-          tellus orci ac. Pellentesque nec nam aliquam sem et tortor. Habitant
-          morbi tristique senectus et. Adipiscing elit duis tristique
-          sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-          eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-          posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography> */}
       </Main>
     </Box>
   );
