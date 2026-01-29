@@ -139,7 +139,7 @@ export default function PersistentDrawerLeft() {
               </Typography>
             </Toolbar>
           </Grid>
-          <Grid
+          {/* <Grid
             sx={{
               display: "flex",
               alignItems: "center",
@@ -175,7 +175,7 @@ export default function PersistentDrawerLeft() {
                 );
               })}
             </Box>
-          </Grid>
+          </Grid> */}
           <Grid sx={{
               display: "flex",
               alignItems: "center",
