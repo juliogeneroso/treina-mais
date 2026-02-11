@@ -9,24 +9,35 @@ import MonteSeuSimulado from "./pages/simulado/criacao/MonteSeuSimulado";
 import SimuladoPendente from "./pages/simulado/pendente/SimuladoPendente";
 import Login from "./pages/login/Login";
 import RecuperarConta from "./pages/login/RecuperarConta";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import PublicRoute from "./routes/PublicRoute";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Rota Pública: Sem o Drawer/Header */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/recuperacao" element={<RecuperarConta />} />
-        {/* Rotas Privadas/Com Layout: Com o Drawer/Header */}
-        <Route element={<PersistentDrawerLeft />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/simulado/:id" element={<Simulado />} />
-          <Route path="/simulado/criar" element={<MonteSeuSimulado />} />
-          <Route path="/simulado/pendente" element={<SimuladoPendente />} />
-          <Route path="/baralhos" element={<Resultado />} />
-          <Route path="/flashcard" element={<FlashCard />} />
-          <Route path="/desempenho" element={<Desempenho />} />
+
+        {/* 🔓 Rotas Públicas */}
+        <Route element={<PublicRoute />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/recuperacao" element={<RecuperarConta />} />
         </Route>
+
+        {/* 🔐 Rotas Protegidas */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<PersistentDrawerLeft />}>
+
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/simulado/:id" element={<Simulado />} />
+            <Route path="/simulado/criar" element={<MonteSeuSimulado />} />
+            <Route path="/simulado/pendente" element={<SimuladoPendente />} />
+            <Route path="/baralhos" element={<Resultado />} />
+            <Route path="/flashcard" element={<FlashCard />} />
+            <Route path="/desempenho" element={<Desempenho />} />
+
+          </Route>
+        </Route>
+
       </Routes>
     </BrowserRouter>
   );
