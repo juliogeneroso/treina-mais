@@ -7,3 +7,11 @@ await request('/users', {
   body: { name: 'Julio' },
   withAuth: true
 })
+
+
+//Refresh token
+const { request } = useApi()
+
+const user = await request<User>('/me', {
+  withAuth: true
+})
