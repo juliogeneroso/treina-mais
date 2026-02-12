@@ -11,6 +11,8 @@ import Login from "./pages/login/Login";
 import RecuperarConta from "./pages/login/RecuperarConta";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
+import EmConstrucao from "./pages/redirecionamentos/EmConstrucao";
+import NaoEncontrado from "./pages/redirecionamentos/NaoEncontrado";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
         <Route element={<PublicRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/recuperacao" element={<RecuperarConta />} />
+          <Route path="/planos" element={<EmConstrucao />} />
+          
         </Route>
 
         {/* 🔐 Rotas Protegidas */}
@@ -37,7 +41,7 @@ function App() {
 
           </Route>
         </Route>
-
+         <Route path="*" element={<NaoEncontrado />} />
       </Routes>
     </BrowserRouter>
   );
