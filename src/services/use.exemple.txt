@@ -1,0 +1,9 @@
+const { request, isLoading, error } = useApi()
+
+const users = await request<User[]>('/users')
+
+await request('/users', {
+  method: 'POST',
+  body: { name: 'Julio' },
+  withAuth: true
+})
