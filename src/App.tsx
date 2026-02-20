@@ -19,7 +19,7 @@ function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* 🔓 Rotas Públicas */}
+        {/* Rotas Públicas */}
         <Route element={<PublicRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/recuperacao" element={<RecuperarConta />} />
@@ -27,7 +27,7 @@ function App() {
           
         </Route>
 
-        {/* 🔐 Rotas Protegidas */}
+        {/* Rotas Protegidas */}
         <Route element={<ProtectedRoute />}>
           <Route element={<PersistentDrawerLeft />}>
 
