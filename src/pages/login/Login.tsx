@@ -20,6 +20,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useApi } from '../../services/useAPI';
 import type { HttpError } from '../../interfaces/error/http-error.interface';
 import type { AuthResponse } from '../../interfaces/user/response-user.interface';
+import { useAppDispatch } from '../../store/hooks';
+import { login as loginAction } from '../../auth/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 // import GoogleIcon from '@mui/icons-material/Google';
 // import FacebookIcon from '@mui/icons-material/Facebook';
@@ -33,6 +36,8 @@ const Login = () => {
   const [errorEmail, setErrorEmail] = React.useState('');
   const [errorPassword, setErrorPassword] = React.useState('');
   const { request, isLoading, error } = useApi();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,12 +71,17 @@ const Login = () => {
 
       const authData = data as AuthResponse;
       const { token, refreshToken, usuario } = authData;
+      if (token && refreshToken && usuario) {
+        dispatch(
+          loginAction({
+            user: usuario,
+            accessToken: token,
+            refreshToken: refreshToken,
+          })
+        );
+      }
 
-      token && localStorage.setItem('accessToken', token);
-      refreshToken && localStorage.setItem('refreshToken', refreshToken);
-      usuario && localStorage.setItem('user', JSON.stringify(usuario));
-
-      window.location.href = '/dashboard';
+      navigate('/');
     }).catch((err: HttpError) => { 
       console.error('Login failed:', err.message);
       setErrorPassword('Falha ao autenticar. Verifique suas credenciais.');

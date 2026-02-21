@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import type { RootState } from '../store'
-import { logout, setAccessToken } from '../auth/authSlice'
+import { logout, setAccessRefreshToken, setAccessToken } from '../auth/authSlice'
+import type { RefreshTokenResponse } from '../interfaces/token/response-refreshToken.interface'
 import type { HttpError } from '../interfaces/error/http-error.interface'
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -33,7 +34,7 @@ export function useApi() {
   const refreshAccessToken = async (): Promise<string | null> => {
     if (!refreshToken) return null
 
-    const response = await fetch(`${API_URL}/refresh`, {
+    const response = await fetch(`${API_URL}/auth/refresh`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -46,10 +47,13 @@ export function useApi() {
       return null
     }
 
-    const data = await response.json()
+    const data = (await response.json()) as RefreshTokenResponse
 
-    // 🔥 Ajustado para bater com sua API
+    // Atualiza accessToken e refreshToken no Redux + localStorage
     dispatch(setAccessToken(data.token))
+    if (data.refreshToken) {
+      dispatch(setAccessRefreshToken(data.refreshToken))
+    }
 
     return data.token
   }
@@ -77,6 +81,7 @@ export function useApi() {
       }
 
       if (withAuth && accessToken) {
+        // Sempre usa o accessToken no header Authorization
         finalHeaders.Authorization = `Bearer ${accessToken}`
       }
 

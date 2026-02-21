@@ -41,7 +41,8 @@ import avatar10 from "../../assets/avatar/avatar_10.png";
 import avatar11 from "../../assets/avatar/avatar_11.png";
 import avatar12 from "../../assets/avatar/avatar_12.png";
 import type { RootState } from "../../store";
-import { useAppSelector } from "../../store/hooks";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import { logout } from "../../auth/authSlice";
 
 const drawerWidth = 240;
 
@@ -123,6 +124,7 @@ const avatarMap: Record<string, string> = {
 export default function PersistentDrawerLeft() {
   const navigate = useNavigate();
   const theme = useTheme();
+  const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(false);
   const isAdmin = true; // mudar aqui
   const [anchorNotif, setAnchorNotif] = React.useState<null | HTMLElement>(
@@ -139,6 +141,12 @@ export default function PersistentDrawerLeft() {
   };
   const {user} = useAppSelector((state: RootState) => state.auth);
   const avatarSrc = user?.avatarCodigo ? avatarMap[user.avatarCodigo] : undefined;
+
+  const handleLogout = () => {
+    dispatch(logout());
+    setAnchorUser(null);
+    navigate("/login");
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -169,43 +177,6 @@ export default function PersistentDrawerLeft() {
               </Typography>
             </Toolbar>
           </Grid>
-          {/* <Grid
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {pages.map((page) => {
-                const route = `/${
-                  page.toLowerCase() === "dashboard" ? "" : page.toLowerCase()
-                }`;
-                const isActive = location.pathname === route;
-
-                return (
-                  <Typography
-                    key={page}
-                    onClick={() => navigate(route)}
-                    sx={{
-                      mx: 2,
-                      cursor: "pointer",
-                      color: isActive ? "#1976d2" : "inherit",
-                      fontWeight: isActive ? "300" : "normal",
-                    }}
-                  >
-                    {page}
-                  </Typography>
-                );
-              })}
-            </Box>
-          </Grid> */}
           <Grid sx={{
               display: "flex",
               alignItems: "center",
@@ -255,12 +226,7 @@ export default function PersistentDrawerLeft() {
                 >
                   <SettingsIcon sx={{ fontSize: 18, mr: 1 }} /> Configurações
                 </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    setAnchorUser(null);
-                    navigate("/logout");
-                  }}
-                >
+                <MenuItem onClick={handleLogout}>
                   <LogoutIcon sx={{ fontSize: 18, mr: 1 }} /> Sair
                 </MenuItem>
               </Menu>

@@ -8,7 +8,7 @@ export interface DesempenhoMateria {
   percentual: number
 }
 
-export interface DesempenhoUsuarioResponse {
+export interface DesempenhoUsuarioDetalhadoResponse {
   nome: string
   nivel: number
   xpTotal: number
@@ -19,4 +19,11 @@ export interface DesempenhoUsuarioResponse {
   diasAtivos: number
   evolucao: EvolucaoDiaria[]
   porMateria: DesempenhoMateria[]
+}
+
+
+export interface DesempenhoUsuarioResponse {
+  questoesResolvidas: number
+  aproveitamento: number
+  tempoEstudo: string
 }

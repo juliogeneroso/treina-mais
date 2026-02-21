@@ -13,9 +13,26 @@ import LayersIcon from '@mui/icons-material/Layers'
 import BarChartIcon from '@mui/icons-material/BarChart'
 import type { RootState } from '../../store'
 import { useAppSelector } from '../../store/hooks'
+import { useApi } from '../../services/useAPI'
+import { useEffect, useState } from 'react'
+import type { DesempenhoUsuarioResponse } from '../../interfaces/progresso/progresso.interface'
 
 export default function Dashboard() {
   const { user } = useAppSelector((state: RootState) => state.auth)
+  const [desempenho, setDesempenho] = useState<DesempenhoUsuarioResponse | null>(null)
+   const { request, isLoading } = useApi()
+
+   useEffect(() => {
+    request(`/api/usuario/progresso/${user?.id}`, {
+      method: 'GET'})
+    .then((data) => {
+      const p = data as DesempenhoUsuarioResponse;
+      setDesempenho(p);
+    } ).catch((err) => {
+      console.error('Erro ao buscar desempenho:', err);
+    } ); 
+    }, []); 
+
   return (
     <Box p={{ xs: 2, md: 4 }} maxWidth={1300} mx="auto">
       <Typography variant="h4" fontWeight={800} mb={0.5}>
@@ -131,10 +148,10 @@ export default function Dashboard() {
                 Questões Resolvidas
               </Typography>
               <Typography variant="h4" fontWeight={800}>
-                1.248
+                {desempenho?.questoesResolvidas ?? '--'}
               </Typography>
               <Typography color="success.main" fontWeight={600}>
-                +12 hoje
+                {desempenho ? `Aproveitamento: ${desempenho.aproveitamento.toFixed(2)}%` : 'Carregando...'}
               </Typography>
             </CardContent>
           </Card>
@@ -145,11 +162,11 @@ export default function Dashboard() {
                 Aproveitamento
               </Typography>
               <Typography variant="h4" fontWeight={800}>
-                78%
+                {desempenho ? `${desempenho.aproveitamento.toFixed(2)}%` : '--'}
               </Typography>
               <LinearProgress
                 variant="determinate"
-                value={78}
+                value={desempenho ? desempenho.aproveitamento : 0}
                 sx={{ mt: 1.5, height: 10, borderRadius: 5 }}
               />
               <Typography fontSize={13} align="right" mt={0.5}>
