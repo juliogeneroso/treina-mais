@@ -31,7 +31,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<PersistentDrawerLeft />}>
 
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/simulado/:id" element={<Simulado />} />
             <Route path="/simulado/criar" element={<MonteSeuSimulado />} />
             <Route path="/simulado/pendente" element={<SimuladoPendente />} />

@@ -1,11 +1,13 @@
-import { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import type { RootState } from '../store';
-import { logout, setAccessToken } from '../auth/authSlice';
+import { useState } from 'react'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import type { RootState } from '../store'
+import { logout, setAccessToken } from '../auth/authSlice'
+import type { HttpError } from '../interfaces/error/http-error.interface'
 
-const BASE_URL = 'http://localhost:3000'
+const API_URL = import.meta.env.VITE_API_URL
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
+
 
 interface RequestOptions {
   method?: HttpMethod
@@ -17,6 +19,7 @@ interface RequestOptions {
 
 export function useApi() {
   const dispatch = useAppDispatch()
+
   const { accessToken, refreshToken } = useAppSelector(
     (state: RootState) => state.auth
   )
@@ -24,10 +27,13 @@ export function useApi() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  /**
+   * 🔄 Refresh Token
+   */
   const refreshAccessToken = async (): Promise<string | null> => {
     if (!refreshToken) return null
 
-    const response = await fetch(`${BASE_URL}/refresh`, {
+    const response = await fetch(`${API_URL}/refresh`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -42,11 +48,15 @@ export function useApi() {
 
     const data = await response.json()
 
-    dispatch(setAccessToken(data.accessToken))
+    // 🔥 Ajustado para bater com sua API
+    dispatch(setAccessToken(data.token))
 
-    return data.accessToken
+    return data.token
   }
 
+  /**
+   * 🌐 Request principal
+   */
   const request = async <T = unknown>(
     url: string,
     {
@@ -70,12 +80,15 @@ export function useApi() {
         finalHeaders.Authorization = `Bearer ${accessToken}`
       }
 
-      const response = await fetch(`${BASE_URL}${url}`, {
+      const response = await fetch(`${API_URL}${url}`, {
         method,
         headers: finalHeaders,
         body: body ? JSON.stringify(body) : undefined
       })
 
+      /**
+       * 🔐 Tratamento de 401 + refresh automático
+       */
       if (response.status === 401 && withAuth && retry) {
         const newToken = await refreshAccessToken()
 
@@ -89,21 +102,55 @@ export function useApi() {
           })
         }
 
-        throw new Error('Sessão expirada')
+        throw {
+          status: 401,
+          message: 'Sessão expirada'
+        } as HttpError
       }
 
+      /**
+       * ❌ Tratamento correto de erro retornando JSON do backend
+       */
+      console.log('Response status:', response)
       if (!response.ok) {
-        throw new Error(`Erro ${response.status}`)
+        let errorData: any = null
+
+        try {
+          errorData = await response.json()
+        } catch {
+          // pode não ter body
+        }
+
+        const apiError: HttpError = {
+          status: response.status,
+          ...(errorData || {
+            message: `Erro ${response.status}`
+          })
+        }
+
+        throw apiError
       }
 
-      return await response.json()
+    
+      if (response.status === 204) {
+        return {} as T
+      }
+
+      return (await response.json()) as T
     } catch (err: any) {
-      setError(err.message)
+      const message =
+        err?.message || 'Ocorreu um erro inesperado.'
+
+      setError(message)
       throw err
     } finally {
       setIsLoading(false)
     }
   }
 
-  return { request, isLoading, error }
+  return {
+    request,
+    isLoading,
+    error
+  }
 }

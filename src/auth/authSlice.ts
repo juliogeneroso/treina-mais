@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
+import type { Usuario } from '../interfaces/user/response-user.interface'
 
 interface AuthState {
-  user: any | null
+  user: Usuario | null
   accessToken: string | null
   refreshToken: string | null
   isAuthenticated: boolean

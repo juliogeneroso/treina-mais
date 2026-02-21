@@ -28,7 +28,20 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Analytics, AutoAwesomeMotion, Dashboard, EditNote, Settings } from "@mui/icons-material";
-import avatar_01 from '../../assets/avatar/avatar_01.png';
+import avatar01 from "../../assets/avatar/avatar_01.png";
+import avatar02 from "../../assets/avatar/avatar_02.png";
+import avatar03 from "../../assets/avatar/avatar_03.png";
+import avatar04 from "../../assets/avatar/avatar_04.png";
+import avatar05 from "../../assets/avatar/avatar_05.png";
+import avatar06 from "../../assets/avatar/avatar_06.png";
+import avatar07 from "../../assets/avatar/avatar_07.png";
+import avatar08 from "../../assets/avatar/avatar_08.png";
+import avatar09 from "../../assets/avatar/avatar_09.png";
+import avatar10 from "../../assets/avatar/avatar_10.png";
+import avatar11 from "../../assets/avatar/avatar_11.png";
+import avatar12 from "../../assets/avatar/avatar_12.png";
+import type { RootState } from "../../store";
+import { useAppSelector } from "../../store/hooks";
 
 const drawerWidth = 240;
 
@@ -92,6 +105,21 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
+const avatarMap: Record<string, string> = {
+  avatar_01: avatar01,
+  avatar_02: avatar02,
+  avatar_03: avatar03,
+  avatar_04: avatar04,
+  avatar_05: avatar05,
+  avatar_06: avatar06,
+  avatar_07: avatar07,
+  avatar_08: avatar08,
+  avatar_09: avatar09,
+  avatar_10: avatar10,
+  avatar_11: avatar11,
+  avatar_12: avatar12,
+};
+
 export default function PersistentDrawerLeft() {
   const navigate = useNavigate();
   const theme = useTheme();
@@ -109,6 +137,8 @@ export default function PersistentDrawerLeft() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+  const {user} = useAppSelector((state: RootState) => state.auth);
+  const avatarSrc = user?.avatarCodigo ? avatarMap[user.avatarCodigo] : undefined;
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -205,7 +235,9 @@ export default function PersistentDrawerLeft() {
                 color="inherit"
                 onClick={(e) => setAnchorUser(e.currentTarget)}
               >
-                <Avatar sx={{ width: 32, height: 32 }} src={avatar_01}>J</Avatar>
+                <Avatar sx={{ width: 40, height: 40 }} src={avatarSrc}>
+                  {user?.name ? user.name.charAt(0).toUpperCase() : "J"}
+                </Avatar>
               </IconButton>
 
               <Menu

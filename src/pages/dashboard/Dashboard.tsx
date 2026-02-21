@@ -11,12 +11,15 @@ import Grid from '@mui/material/Grid'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import LayersIcon from '@mui/icons-material/Layers'
 import BarChartIcon from '@mui/icons-material/BarChart'
+import type { RootState } from '../../store'
+import { useAppSelector } from '../../store/hooks'
 
 export default function Dashboard() {
+  const { user } = useAppSelector((state: RootState) => state.auth)
   return (
     <Box p={{ xs: 2, md: 4 }} maxWidth={1300} mx="auto">
       <Typography variant="h4" fontWeight={800} mb={0.5}>
-        Olá, Wallace Ferreira 👋
+        Olá, {user?.name}
       </Typography>
 
       <Typography color="text.secondary" mb={4} fontSize={16}>
