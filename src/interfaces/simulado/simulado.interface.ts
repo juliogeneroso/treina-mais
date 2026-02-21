@@ -1,5 +1,7 @@
 export interface FiltroSimuladoResponse {
-  concursoId: number
+  pacoteId: number,
+  concursoId: number,
+  nomePacote: string,
   temas: {
     id: number
     nome: string
@@ -11,7 +13,7 @@ export interface FiltroSimuladoResponse {
         nome: string
       }[]
     }[]
-  }[]
-  bancasDisponiveis: string[]
-  niveisDisponiveis: string[]
+  }[],
+  bancasDisponiveis: string[],
+  niveisDisponiveis: string[],
 }

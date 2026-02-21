@@ -35,7 +35,7 @@ const Login = () => {
   const [password, setPassword] = React.useState('');   
   const [errorEmail, setErrorEmail] = React.useState('');
   const [errorPassword, setErrorPassword] = React.useState('');
-  const { request, isLoading, error } = useApi();
+  const { request, isLoading } = useApi();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -211,6 +211,7 @@ const Login = () => {
               fullWidth
               variant="contained"
               size="large"
+              loading={isLoading}
               onClick={() => login()}
               sx={{
                 py: 1.8,

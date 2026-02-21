@@ -261,7 +261,7 @@ export default function PersistentDrawerLeft() {
           <ListItem key={"Dashboard"} disablePadding>
               <ListItemButton   
               component={NavLink}
-              to="/"
+              to="/dashboard"
               sx={{
                 "&.active": {
                   bgcolor: "action.selected",

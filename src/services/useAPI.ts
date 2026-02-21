@@ -136,9 +136,9 @@ export function useApi() {
         throw apiError
       }
 
-    
       if (response.status === 204) {
-        return {} as T
+        // Nenhum conteúdo: retorna null para permitir checagem simples (!data)
+        return null as T
       }
 
       return (await response.json()) as T

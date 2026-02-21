@@ -35,7 +35,7 @@ const NaoEncontrado = () => {
         <Button
           variant="contained"
           size="large"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/dashboard")}
         >
           Voltar para o início
         </Button>
