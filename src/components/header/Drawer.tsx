@@ -27,6 +27,8 @@ import { Badge, Avatar } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import { Analytics, AutoAwesomeMotion, Dashboard, EditNote, Settings } from "@mui/icons-material";
 import avatar01 from "../../assets/avatar/avatar_01.png";
 import avatar02 from "../../assets/avatar/avatar_02.png";
@@ -43,6 +45,7 @@ import avatar12 from "../../assets/avatar/avatar_12.png";
 import type { RootState } from "../../store";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { logout } from "../../auth/authSlice";
+import { useColorMode } from "../../theme";
 
 const drawerWidth = 240;
 
@@ -124,6 +127,7 @@ const avatarMap: Record<string, string> = {
 export default function PersistentDrawerLeft() {
   const navigate = useNavigate();
   const theme = useTheme();
+  const { mode, toggleColorMode } = useColorMode();
   const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(false);
   const isAdmin = true; // mudar aqui
@@ -183,6 +187,13 @@ export default function PersistentDrawerLeft() {
               justifyContent: "center",
             }}>
             <Box sx={{ display: "flex", alignItems: "center", pr: 2 }}>
+              <IconButton color="inherit" onClick={toggleColorMode} sx={{ mr: 1 }}>
+                {mode === "dark" ? (
+                  <LightModeIcon fontSize="small" />
+                ) : (
+                  <DarkModeIcon fontSize="small" />
+                )}
+              </IconButton>
               <IconButton
                 color="inherit"
                 onClick={(e) => setAnchorNotif(e.currentTarget)}
@@ -278,7 +289,7 @@ export default function PersistentDrawerLeft() {
             <ListItem key={"Simulados"} disablePadding>
               <ListItemButton  
               component={NavLink}
-              to="/simulado/2"
+              to="/simulado"
               sx={{
                 "&.active": {
                   bgcolor: "action.selected",

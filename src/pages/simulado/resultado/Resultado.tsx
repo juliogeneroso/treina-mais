@@ -100,7 +100,7 @@ export const Resultado = () => {
               </CardContent>
             </Card>
 
-            <Card sx={{ flex: 1, borderRadius: 3, bgcolor: "#fef2f2" }}>
+            <Card sx={{ flex: 1, borderRadius: 3, bgcolor: "error.light" }}>
               <CardContent>
                 <Typography variant="caption" color="text.secondary">
                   Erros
@@ -158,7 +158,7 @@ export const Resultado = () => {
           </CardContent>
         </Card>
 
-        <Card sx={{ borderRadius: 3, bgcolor: "#f8fafc" }}>
+        <Card sx={{ borderRadius: 3, bgcolor: "background.default" }}>
           <CardContent>
             <Box display="flex" justifyContent="space-between" mb={1}>
               <Box display="flex" gap={2} alignItems="center">
@@ -202,7 +202,7 @@ export const Resultado = () => {
           mt: 5,
           borderRadius: 3,
           bgcolor: "primary.main",
-          color: "white",
+          color: "primary.contrastText",
         }}
       >
         <CardContent
@@ -213,10 +213,10 @@ export const Resultado = () => {
           }}
         >
           <Box>
-            <Typography fontWeight={700}>
+            <Typography fontWeight={700} color="inherit">
               Excelente progresso, aluno!
             </Typography>
-            <Typography variant="body2">
+            <Typography variant="body2" color="inherit">
               Você conquistou 19 pontos de melhoria hoje.
             </Typography>
           </Box>
@@ -225,11 +225,11 @@ export const Resultado = () => {
             variant="contained"
             startIcon={<AutoAwesomeIcon />}
             sx={{
-              bgcolor: "white",
+              bgcolor: "background.paper",
               color: "primary.main",
               fontWeight: 700,
               borderRadius: 2,
-              "&:hover": { bgcolor: "#e3f2fd" },
+              "&:hover": { bgcolor: "action.hover" },
             }}
           >
             Gerar Flashcards

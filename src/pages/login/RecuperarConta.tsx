@@ -34,8 +34,8 @@ const RecuperarConta = () => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            bgcolor: '#3b82f6',
-            color: 'white',
+            bgcolor: 'primary.main',
+            color: 'primary.contrastText',
             p: 6,
           }}
         >
@@ -64,7 +64,7 @@ const RecuperarConta = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            bgcolor: 'white',
+            bgcolor: 'background.paper',
             p: { xs: 3, md: 8 },
           }}
         >
@@ -76,7 +76,7 @@ const RecuperarConta = () => {
                 alignItems: 'center', 
                 gap: 1, 
                 mb: 4, 
-                color: '#64748b', 
+                color: 'text.secondary', 
                 textDecoration: 'none',
                 fontWeight: 'bold',
                 fontSize: '0.875rem',
@@ -86,7 +86,7 @@ const RecuperarConta = () => {
               <ArrowBackRoundedIcon fontSize="small" /> Voltar para o Login
             </Link>
 
-            <Typography variant="h4" fontWeight="900" color="#0f172a" gutterBottom>
+            <Typography variant="h4" fontWeight="900" color="text.primary" gutterBottom>
               Esqueceu a senha?
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 5 }}>
@@ -95,7 +95,7 @@ const RecuperarConta = () => {
 
             <Stack spacing={4}>
               <Box>
-                <Typography variant="caption" fontWeight="bold" sx={{ ml: 1, mb: 0.5, display: 'block', color: '#64748b' }}>
+                <Typography variant="caption" fontWeight="bold" color="text.secondary" sx={{ ml: 1, mb: 0.5, display: 'block' }}>
                   E-mail cadastrado
                 </Typography>
                 <TextField
@@ -106,10 +106,10 @@ const RecuperarConta = () => {
                     input: {
                       startAdornment: (
                         <InputAdornment position="start">
-                          <EmailRoundedIcon fontSize="small" sx={{ color: '#94a3b8' }} />
+                          <EmailRoundedIcon fontSize="small" color="disabled" />
                         </InputAdornment>
                       ),
-                      sx: { borderRadius: 3, bgcolor: '#f8fafc' }
+                      sx: { borderRadius: 3, bgcolor: 'action.hover' }
                     }
                   }}
                 />
@@ -134,7 +134,7 @@ const RecuperarConta = () => {
               </Button>
 
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2" sx={{ color: '#64748b' }}>
+                <Typography variant="body2" color="text.secondary">
                   Ainda tem dúvidas?{' '}
                   <Link href="#" underline="hover" sx={{ fontWeight: 'bold', color: '#3b82f6' }}>
                     Contatar suporte

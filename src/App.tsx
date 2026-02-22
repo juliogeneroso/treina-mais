@@ -32,9 +32,8 @@ function App() {
           <Route element={<PersistentDrawerLeft />}>
 
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/simulado/:id" element={<Simulado />} />
+            <Route path="/simulado" element={<Simulado />} />
             <Route path="/simulado/criar" element={<MonteSeuSimulado />} />
-            <Route path="/simulado/pendente" element={<SimuladoPendente />} />
             <Route path="/baralhos" element={<Resultado />} />
             <Route path="/flashcard" element={<FlashCard />} />
             <Route path="/desempenho" element={<Desempenho />} />

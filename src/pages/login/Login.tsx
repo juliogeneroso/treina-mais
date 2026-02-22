@@ -81,7 +81,7 @@ const Login = () => {
         );
       }
 
-      navigate('/');
+      navigate('/dahsboard');
     }).catch((err: HttpError) => { 
       console.error('Login failed:', err.message);
       setErrorPassword('Falha ao autenticar. Verifique suas credenciais.');
@@ -99,9 +99,8 @@ const Login = () => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          bgcolor: '#3b82f6',
-         
-          color: 'white'
+          bgcolor: 'primary.main',
+          color: 'primary.contrastText'
         }}
       >
         <Box sx={{ maxWidth: 450, textAlign: 'center' }}>
@@ -126,12 +125,12 @@ const Login = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          bgcolor: 'white',
+          bgcolor: 'background.paper',
           p: { xs: 3, md: 8 },
         }}
       >
         <Box sx={{ width: '100%', maxWidth: 400 }}>
-          <Typography variant="h4" fontWeight="900" color="#0f172a" textAlign="center" gutterBottom>
+          <Typography variant="h4" fontWeight="900" color="text.primary" textAlign="center" gutterBottom>
             ENTRAR
           </Typography>
           <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mb: 5 }}>
@@ -140,7 +139,7 @@ const Login = () => {
 
           <Stack spacing={3}>
             <Box>
-              <Typography variant="caption" fontWeight="bold" sx={{ ml: 1, mb: 0.5, display: 'block', color: '#64748b' }}>
+              <Typography variant="caption" fontWeight="bold" color="text.secondary" sx={{ ml: 1, mb: 0.5, display: 'block' }}>
                 E-mail ou Usuário
               </Typography>
               <TextField
@@ -155,17 +154,17 @@ const Login = () => {
                   input: {
                     startAdornment: (
                       <InputAdornment position="start">
-                        <EmailRoundedIcon fontSize="small" sx={{ color: '#94a3b8' }} />
+                        <EmailRoundedIcon fontSize="small" color="disabled" />
                       </InputAdornment>
                     ),
-                    sx: { borderRadius: 3, bgcolor: '#f8fafc' }
+                    sx: { borderRadius: 3, bgcolor: 'action.hover' }
                   }
                 }}
               />
             </Box>
 
             <Box>
-              <Typography variant="caption" fontWeight="bold" sx={{ ml: 1, mb: 0.5, display: 'block', color: '#64748b' }}>
+              <Typography variant="caption" fontWeight="bold" color="text.secondary" sx={{ ml: 1, mb: 0.5, display: 'block' }}>
                 Senha
               </Typography>
               <TextField
@@ -181,7 +180,7 @@ const Login = () => {
                   input: {
                     startAdornment: (
                       <InputAdornment position="start">
-                        <LockRoundedIcon fontSize="small" sx={{ color: '#94a3b8' }} />
+                        <LockRoundedIcon fontSize="small" color="disabled" />
                       </InputAdornment>
                     ),
                     endAdornment: (
@@ -191,7 +190,7 @@ const Login = () => {
                         </IconButton>
                       </InputAdornment>
                     ),
-                    sx: { borderRadius: 3, bgcolor: '#f8fafc' }
+                    sx: { borderRadius: 3, bgcolor: 'action.hover' }
                   }
                 }}
               />
@@ -200,7 +199,7 @@ const Login = () => {
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <FormControlLabel 
                 control={<Checkbox size="small" />} 
-                label={<Typography variant="caption" sx={{ color: '#64748b' }}>Lembrar de mim</Typography>} 
+                label={<Typography variant="caption" color="text.secondary">Lembrar de mim</Typography>} 
               />
               <Link href="/recuperacao" underline="hover" sx={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#3b82f6' }}>
                 Esqueceu a senha?
@@ -227,7 +226,7 @@ const Login = () => {
               Entrar
             </Button>
 
-            <Typography variant="body2" textAlign="center" sx={{ color: '#64748b' }}>
+            <Typography variant="body2" textAlign="center" color="text.secondary">
               Não tem uma conta?{' '}
               <Link href="#" underline="hover" sx={{ fontWeight: 'bold', color: '#3b82f6' }}>
                 Inscreva-se

@@ -150,10 +150,10 @@ const MonteSeuSimulado = () => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 5 }}>
       <Container maxWidth="xl">
-        <Typography variant="h3" fontWeight="900" sx={{ color: '#0f172a', mb: 1 }}>
+        <Typography variant="h3" fontWeight="900" color="text.primary" sx={{ mb: 1 }}>
           Monte seu Simulado
         </Typography>
-        <Typography variant="body1" sx={{ color: '#64748b', mb: 5, maxWidth: 650 }}>
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 5, maxWidth: 650 }}>
           Personalize sua experiência de estudo escolhendo os temas, bancas e o nível de dificuldade ideal para sua meta.
         </Typography>
 
@@ -208,9 +208,9 @@ const MonteSeuSimulado = () => {
                         sx={{
                           p: 3, textAlign: 'center', cursor: 'pointer', borderRadius: 3,
                           border: '2px solid',
-                          borderColor: materia.includes(tema.nome) ? '#3b82f6' : '#f1f5f9',
+                          borderColor: materia.includes(tema.nome) ? 'primary.main' : 'divider',
                           transition: '0.2s',
-                          '&:hover': { borderColor: '#3b82f6' }
+                          '&:hover': { borderColor: 'primary.main' }
                         }}
                       >
                         <Box sx={{ mb: 1, opacity: materia.includes(tema.nome) ? 1 : 0.5 }}>
@@ -249,9 +249,9 @@ const MonteSeuSimulado = () => {
                             cursor: 'pointer',
                             borderRadius: 3,
                             border: '2px solid',
-                            borderColor: capitulosSelecionados.includes(capitulo.nome) ? '#3b82f6' : '#f1f5f9',
+                            borderColor: capitulosSelecionados.includes(capitulo.nome) ? 'primary.main' : 'divider',
                             transition: '0.2s',
-                            '&:hover': { borderColor: '#3b82f6' },
+                            '&:hover': { borderColor: 'primary.main' },
                           }}
                         >
                           <Typography variant="caption" fontWeight="bold">
@@ -291,9 +291,9 @@ const MonteSeuSimulado = () => {
                             cursor: 'pointer',
                             borderRadius: 3,
                             border: '2px solid',
-                            borderColor: subcapitulosSelecionados.includes(sub.nome) ? '#3b82f6' : '#f1f5f9',
+                            borderColor: subcapitulosSelecionados.includes(sub.nome) ? 'primary.main' : 'divider',
                             transition: '0.2s',
-                            '&:hover': { borderColor: '#3b82f6' },
+                            '&:hover': { borderColor: 'primary.main' },
                           }}
                         >
                           <Typography variant="caption" fontWeight="bold">
@@ -343,19 +343,19 @@ const MonteSeuSimulado = () => {
                     fullWidth
                     size="small"
                     sx={{
-                      bgcolor: '#e2e8f0',
+                      bgcolor: 'action.hover',
                       p: 0.5,
                       borderRadius: 2,
                       '& .MuiToggleButton-root': {
                         border: 'none',
                         textTransform: 'none',
                         borderRadius: 2,
-                        color: '#64748b',
+                        color: 'text.secondary',
                         fontWeight: 500,
                       },
                       '& .MuiToggleButton-root.Mui-selected': {
-                        bgcolor: '#ffffff',
-                        color: '#3b82f6',
+                        bgcolor: 'background.paper',
+                        color: 'primary.main',
                         boxShadow: '0 2px 4px rgba(15,23,42,0.15)',
                       },
                     }}
@@ -370,7 +370,7 @@ const MonteSeuSimulado = () => {
                   <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                     <FormatListNumberedIcon color="primary" fontSize="small" /> Qtd. de Questões
                   </Typography>
-                  <TextField fullWidth onChange={(e) => setNumeroQuestoes(Number(e.target.value))} size="small" defaultValue={24} slotProps={{ htmlInput: { style: { fontWeight: 'bold' } } }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2, bgcolor: 'white' } }} />
+                  <TextField fullWidth onChange={(e) => setNumeroQuestoes(Number(e.target.value))} size="small" defaultValue={24} slotProps={{ htmlInput: { style: { fontWeight: 'bold' } } }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2, bgcolor: 'background.paper' } }} />
                 </Grid>
               </Grid>
 
@@ -379,7 +379,7 @@ const MonteSeuSimulado = () => {
                   <Typography variant="subtitle1" fontWeight="bold" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <AccessTimeIcon color="primary" fontSize="small" /> Tempo de Prova
                   </Typography>
-                  <Chip label={`${tempo} minutos`} size="small" sx={{ bgcolor: '#dbeafe', color: '#1d4ed8', fontWeight: 'bold' }} />
+                  <Chip label={`${tempo} minutos`} size="small" sx={{ bgcolor: 'primary.light', color: 'primary.dark', fontWeight: 'bold' }} />
                 </Stack>
                 <Slider value={tempo} onChange={(_, v) => setTempo(v as number)} min={30} max={300} sx={{ mt: 2 }} />
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: -1 }}>

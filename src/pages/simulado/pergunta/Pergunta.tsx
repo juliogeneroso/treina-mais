@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Box,
   Card,
@@ -9,22 +8,44 @@ import {
   Divider,
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import type { Questao } from "../../../interfaces/simulado/simulado-ativo.interface";
 
-type Option = {
-  id: string;
-  label: string;
-};
+type Alternativa = "A" | "B" | "C" | "D";
 
-const options: Option[] = [
-  { id: "A", label: "30 cm²" },
-  { id: "B", label: "60 cm²" },
-  { id: "C", label: "65 cm²" },
-  { id: "D", label: "12 cm²" },
-  { id: "E", label: "15 cm²" },
-];
+interface PerguntaProps {
+  questao: Questao;
+  indice: number;
+  total: number;
+  alternativaSelecionada: Alternativa | null;
+  onSelecionarAlternativa: (alternativa: Alternativa) => void;
+  onAnterior: () => void;
+  onProxima: () => void;
+  isPrimeira: boolean;
+  isUltima: boolean;
+  onFinalizar: () => void;
+  bloqueado: boolean;
+}
 
-export const Pergunta = () => {
-  const [selected, setSelected] = useState<string | null>(null);
+export const Pergunta = ({
+  questao,
+  indice,
+  total,
+  alternativaSelecionada,
+  onSelecionarAlternativa,
+  onAnterior,
+  onProxima,
+  isPrimeira,
+  isUltima,
+  onFinalizar,
+  bloqueado
+}: PerguntaProps) => {
+
+  const options = [
+    { id: "A" as const, label: questao.alternativaA },
+    { id: "B" as const, label: questao.alternativaB },
+    { id: "C" as const, label: questao.alternativaC },
+    { id: "D" as const, label: questao.alternativaD },
+  ];
 
   return (
     <Card
@@ -49,10 +70,10 @@ export const Pergunta = () => {
               color="text.secondary"
               sx={{ letterSpacing: 1, fontWeight: 600 }}
             >
-              DISCIPLINA
+              {questao.tema}
             </Typography>
             <Typography fontWeight={600} fontSize={18}>
-              Matemática · Geometria Plana
+              {questao.capitulo} · {questao.subCapitulo}
             </Typography>
           </Box>
 
@@ -61,25 +82,26 @@ export const Pergunta = () => {
             color="primary"
             sx={{ fontSize: 14 }}
           >
-            Questão 01/10
+            {`Questão ${indice + 1}/${total}`}
           </Typography>
         </Box>
 
         <Divider sx={{ mb: 4 }} />
 
         <Typography mb={4} fontSize={16} lineHeight={1.6}>
-          No triângulo retângulo ABC, a hipotenusa mede 13 cm e um dos catetos mede
-          5 cm. Determine a área deste triângulo em centímetros quadrados.
+          {questao.enunciado}
         </Typography>
 
         <Stack spacing={2}>
           {options.map((option) => {
-            const isSelected = selected === option.id;
+            const isSelected = alternativaSelecionada === option.id;
 
             return (
               <Button
                 key={option.id}
-                onClick={() => setSelected(option.id)}
+                disabled={bloqueado}
+                variant={isSelected ? "contained" : "outlined"}
+                onClick={() => onSelecionarAlternativa(option.id)}
                 disableRipple
                 sx={{
                   justifyContent: "space-between",
@@ -139,16 +161,30 @@ export const Pergunta = () => {
         <Box display="flex" justifyContent="space-between" mt={5}>
           <Button
             variant="outlined"
+            disabled={isPrimeira}
+            onClick={onAnterior}
             sx={{ borderRadius: 2, px: 3 }}
           >
             ← Anterior
           </Button>
-          <Button
-            variant="contained"
-            sx={{ borderRadius: 2, px: 4 }}
-          >
-            Próxima →
-          </Button>
+          {isUltima ? (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={onFinalizar}
+              sx={{ borderRadius: 2, px: 4, textTransform: "none" }}
+            >
+              Finalizar simulado
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              onClick={onProxima}
+              sx={{ borderRadius: 2, px: 4 }}
+            >
+              Próxima →
+            </Button>
+          )}
         </Box>
       </CardContent>
     </Card>

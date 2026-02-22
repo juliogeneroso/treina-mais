@@ -5,16 +5,19 @@ import { SnackbarProvider } from 'notistack'
 import './index.css'
 import App from './App.tsx'
 import { store } from './store'
+import { AppThemeProvider } from './theme'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
-      <SnackbarProvider
-        maxSnack={3}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <App />
-      </SnackbarProvider>
+      <AppThemeProvider>
+        <SnackbarProvider
+          maxSnack={3}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <App />
+        </SnackbarProvider>
+      </AppThemeProvider>
     </Provider>
   </StrictMode>,
 )

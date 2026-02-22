@@ -50,7 +50,7 @@ export const FlashCard = () => {
               justifyContent: "center",
             }}
           >
-            <MenuBookIcon sx={{ fontSize: 64, color: "white" }} />
+            <MenuBookIcon sx={{ fontSize: 64, color: "primary.contrastText" }} />
           </Box>
 
           <CardContent
@@ -172,7 +172,7 @@ export const FlashCard = () => {
 
       <Box
         sx={{
-          bgcolor: "#f8fafc",
+          bgcolor: "background.default",
           p: 3,
           borderRadius: 3,
           borderLeft: "4px solid",
