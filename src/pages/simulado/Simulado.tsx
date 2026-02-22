@@ -66,6 +66,13 @@ export const Simulado = () => {
     };
 
     const finalizarDefinitivo = () => {
+        if (simuladoAtivo) {
+            try {
+                window.localStorage.removeItem(`simulado_inicio_${simuladoAtivo.id}`);
+            } catch {
+                // ignore falhas de limpeza do localStorage
+            }
+        }
         console.log("Respostas do simulado:", respostas);
     };
 
@@ -122,7 +129,28 @@ export const Simulado = () => {
         const isPrimeira = indiceAtual === 0;
         const isUltima = indiceAtual === totalQuestoes - 1;
 
-        const duracaoInicialSegundos = simuladoAtivo.tempoDuracao * 60;
+        const duracaoTotalSegundos = simuladoAtivo.tempoDuracao * 60;
+
+        const storageKeyInicio = `simulado_inicio_${simuladoAtivo.id}`;
+        let duracaoInicialSegundos = duracaoTotalSegundos;
+
+        try {
+            const salvo = window.localStorage.getItem(storageKeyInicio);
+            if (salvo) {
+                const inicioMs = Number(salvo);
+                if (!Number.isNaN(inicioMs) && inicioMs > 0) {
+                    const agora = Date.now();
+                    const decorrido = Math.floor((agora - inicioMs) / 1000);
+                    duracaoInicialSegundos = Math.max(duracaoTotalSegundos - decorrido, 0);
+                }
+            } else {
+                // primeira vez que o usuário entra no simulado neste navegador
+                window.localStorage.setItem(storageKeyInicio, String(Date.now()));
+            }
+        } catch {
+            // se localStorage não estiver disponível, cai no comportamento original
+            duracaoInicialSegundos = duracaoTotalSegundos;
+        }
 
         const handlePausarESair = () => {
             // Apenas navega para fora mantendo o simulado pendente
