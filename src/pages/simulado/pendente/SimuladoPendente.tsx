@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Box,
   Typography,
@@ -29,9 +28,31 @@ const SimuladoPendente = ({ data, onContinuar }: SimuladoPendenteProps) => {
   const { request, isLoading: loading } = useApi();
   const navigate = useNavigate();
 
+  const storageKeyTempo = `simulado_tempo_restante_${data.id}`;
+  let tempoRestanteTexto: string = `${data.tempoDuracao} min`;
+
+  try {
+    const salvo = window.localStorage.getItem(storageKeyTempo);
+    if (salvo) {
+      const segundos = Number(salvo);
+      if (!Number.isNaN(segundos) && segundos >= 0) {
+        const minutos = Math.floor(segundos / 60);
+        const restoSegundos = segundos % 60;
+        tempoRestanteTexto = `${String(minutos).padStart(2, '0')}:${String(restoSegundos).padStart(2, '0')}`;
+      }
+    }
+  } catch {
+    // se localStorage não estiver disponível, mantém o tempo padrão em minutos
+  }
+
 
   const descartarProgresso = () => {
     request(`/api/simulado/delete/${data.id}`, { method: 'DELETE', withAuth: true }).then(() => {
+      try {
+        window.localStorage.removeItem(`simulado_tempo_restante_${data.id}`);
+      } catch {
+        // ignore falhas ao limpar o tempo salvo
+      }
       enqueueSnackbar('Progresso do simulado descartado com sucesso.', { variant: 'success' });
       navigate('/simulado/criar');
     }).catch((err) => {
@@ -132,7 +153,7 @@ const SimuladoPendente = ({ data, onContinuar }: SimuladoPendenteProps) => {
                   </Typography>
                 </Stack>
                 <Typography variant="h4" fontWeight="900" color="text.primary">
-                  {data.tempoDuracao} min
+                  {tempoRestanteTexto}
                 </Typography>
               </Paper>
             </Grid>

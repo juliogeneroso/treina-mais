@@ -6,7 +6,6 @@ import { FlashCard } from "./pages/flashcard/FlashCard";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Desempenho from "./pages/desempenho/Desempenho";
 import MonteSeuSimulado from "./pages/simulado/criacao/MonteSeuSimulado";
-import SimuladoPendente from "./pages/simulado/pendente/SimuladoPendente";
 import Login from "./pages/login/Login";
 import RecuperarConta from "./pages/login/RecuperarConta";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -34,7 +33,8 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/simulado" element={<Simulado />} />
             <Route path="/simulado/criar" element={<MonteSeuSimulado />} />
-            <Route path="/baralhos" element={<Resultado />} />
+            <Route path="/simulado/resultado" element={<Resultado />} />
+            {/* <Route path="/baralhos" element={<Resultado />} /> */}
             <Route path="/flashcard" element={<FlashCard />} />
             <Route path="/desempenho" element={<Desempenho />} />
 

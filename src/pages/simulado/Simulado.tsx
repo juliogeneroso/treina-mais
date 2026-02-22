@@ -7,6 +7,7 @@ import type { SimuladoAtivoResponse, Questao } from "../../interfaces/simulado/s
 import SimuladoPendente from "./pendente/SimuladoPendente";
 import { ListasPerguntas } from "./pergunta/ListasPerguntas";
 import { Temporizador } from "./temporizador/Temporizador";
+import type { SimuladoFinalizadoResponse } from "../../interfaces/simulado/responder-simulado.interface";
 
 export const Simulado = () => {
     const { request, isLoading } = useApi();
@@ -66,9 +67,35 @@ export const Simulado = () => {
     };
 
     const finalizarDefinitivo = () => {
+        /* {
+  "simuladoId": 9007199254740991,
+  "respostas": [
+    {
+      "questaoId": 9007199254740991,
+      "respostaUsuario": "string"
+    }
+  ]
+} */
         if (simuladoAtivo) {
             try {
-                window.localStorage.removeItem(`simulado_inicio_${simuladoAtivo.id}`);
+                request(`/api/simulado/${simuladoAtivo.id}/responder`, {
+                    method: 'POST',
+                    withAuth: true,
+                    body: {
+                        simuladoId: simuladoAtivo.id,
+                        respostas: Object.entries(respostas).map(([questaoId, respostaUsuario]) => ({
+                            questaoId: Number(questaoId),
+                            respostaUsuario
+                        }))
+                    }
+                }).then((data) => { 
+                    window.localStorage.removeItem(`simulado_tempo_restante_${simuladoAtivo.id}`);
+                    const d = data as SimuladoFinalizadoResponse;
+                    navigate('/simulado/resultado', { state: { resultado: d, nomeSimulado: simuladoAtivo.titulo} });
+                }).catch((err) => {
+                    console.error('Erro ao finalizar simulado:', err);
+                });
+             
             } catch {
                 // ignore falhas de limpeza do localStorage
             }
@@ -131,29 +158,7 @@ export const Simulado = () => {
 
         const duracaoTotalSegundos = simuladoAtivo.tempoDuracao * 60;
 
-        const storageKeyInicio = `simulado_inicio_${simuladoAtivo.id}`;
-        let duracaoInicialSegundos = duracaoTotalSegundos;
-
-        try {
-            const salvo = window.localStorage.getItem(storageKeyInicio);
-            if (salvo) {
-                const inicioMs = Number(salvo);
-                if (!Number.isNaN(inicioMs) && inicioMs > 0) {
-                    const agora = Date.now();
-                    const decorrido = Math.floor((agora - inicioMs) / 1000);
-                    duracaoInicialSegundos = Math.max(duracaoTotalSegundos - decorrido, 0);
-                }
-            } else {
-                // primeira vez que o usuário entra no simulado neste navegador
-                window.localStorage.setItem(storageKeyInicio, String(Date.now()));
-            }
-        } catch {
-            // se localStorage não estiver disponível, cai no comportamento original
-            duracaoInicialSegundos = duracaoTotalSegundos;
-        }
-
         const handlePausarESair = () => {
-            // Apenas navega para fora mantendo o simulado pendente
             navigate('/dashboard');
         };
 
@@ -195,7 +200,8 @@ export const Simulado = () => {
                         >
                             {/* Card de temporizador */}
                             <Temporizador
-                                duracaoInicialSegundos={duracaoInicialSegundos}
+                                simuladoId={simuladoAtivo.id}
+                                duracaoTotalSegundos={duracaoTotalSegundos}
                                 onTempoEsgotado={handleTempoEsgotado}
                                 onPausarESair={handlePausarESair}
                             />

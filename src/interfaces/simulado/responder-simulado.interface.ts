@@ -20,3 +20,19 @@ export interface ResultadoDetalhadoResponse {
   }[]
   pontuacaoFinal: number
 }
+
+export interface SimuladoFinalizadoResponse {
+  simuladoId: number
+  pontuacaoFinal: number
+  totalQuestoes: number
+  totalAcertos: number
+  totalErros: number
+  feedbackQuestoes: {
+    questaoId: number
+    enunciado: string
+    respostaCorreta: string
+    respostaUsuario: string
+    correta: boolean
+    explicacao: string
+  }[]
+}

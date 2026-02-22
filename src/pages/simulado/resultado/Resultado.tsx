@@ -13,8 +13,77 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import { useLocation, useNavigate } from "react-router-dom";
+import type { SimuladoFinalizadoResponse } from "../../../interfaces/simulado/responder-simulado.interface";
+
+interface ResultadoLocationState {
+  resultado: SimuladoFinalizadoResponse | null;
+  nomeSimulado: string;
+}
 
 export const Resultado = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const state = (location.state || {}) as ResultadoLocationState;
+
+  const resultado = state.resultado ?? null;
+  const nomeSimulado = state.nomeSimulado ?? "";
+
+  const percentual = resultado ? Math.round(resultado.pontuacaoFinal * 100) : 0;
+
+  const getMensagemFinal = (p: number) => {
+    if (p >= 100) {
+      return {
+        titulo: "Incrível, você gabaritou!",
+        descricao:
+          "Você acertou 100% das questões. Continue assim e leve essa confiança para a prova.",
+      };
+    }
+    if (p >= 90) {
+      return {
+        titulo: "Quase perfeito!",
+        descricao:
+          `Você acertou ${p}% das questões. Falta pouco para gabaritar, revise apenas os pontos de erro.`,
+      };
+    }
+    if (p >= 70) {
+      return {
+        titulo: "Ótimo desempenho!",
+        descricao:
+          `Você acertou ${p}% das questões. Você está bem preparado, continue revisando para consolidar o conteúdo.`,
+      };
+    }
+    if (p >= 50) {
+      return {
+        titulo: "Bom caminho!",
+        descricao:
+          `Você acertou ${p}% das questões. Já domina boa parte, foque nas questões erradas para subir ainda mais a nota.`,
+      };
+    }
+    if (p >= 30) {
+      return {
+        titulo: "Você está aquecendo!",
+        descricao:
+          `Você acertou ${p}% das questões. Identifique os temas com mais erro e priorize-os nos próximos estudos.`,
+      };
+    }
+    if (p >= 10) {
+      return {
+        titulo: "Primeiros passos dados!",
+        descricao:
+          `Você acertou ${p}% das questões. Continue praticando, cada simulado é uma oportunidade de aprender.`,
+      };
+    }
+    return {
+      titulo: "Todo começo conta!",
+      descricao:
+        "Mesmo com poucos ou nenhum acerto, o importante é identificar onde melhorar. Use esse resultado como ponto de partida.",
+    };
+  };
+  
+
+  const mensagemFinal = getMensagemFinal(percentual);
+
   return (
     <Box sx={{ maxWidth: 1100, mx: "auto", p: 4 }}>
       <Box
@@ -28,7 +97,7 @@ export const Resultado = () => {
             Resultado do Simulado
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Simulado Geral EEAR · Turma 2024.1
+            {nomeSimulado}
           </Typography>
         </Box>
 
@@ -36,6 +105,7 @@ export const Resultado = () => {
           variant="outlined"
           startIcon={<ArrowBackIcon />}
           sx={{ borderRadius: 2 }}
+          onClick={() => navigate("/dashboard")}
         >
           Voltar ao Início
         </Button>
@@ -50,32 +120,32 @@ export const Resultado = () => {
           <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
             <Box sx={{ minWidth: 200 }}>
               <Typography fontWeight={700} fontSize={28}>
-                80%
+                {resultado ? `${Math.round(resultado.pontuacaoFinal * 100)}%` : '0%'}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Taxa de Acerto Geral
               </Typography>
               <LinearProgress
                 variant="determinate"
-                value={80}
+                value={resultado ? Math.round(resultado.pontuacaoFinal * 100) : 0}
                 sx={{
                   mt: 1,
                   height: 8,
                   borderRadius: 4,
                 }}
               />
-              <Typography variant="caption" color="text.secondary">
-                Acima de 75% dos candidatos
+              <Typography variant="caption" color="text.primary">
+                {resultado ? `${resultado.totalAcertos} acertos de ${resultado.totalQuestoes} questões` : 'Carregando...'}
               </Typography>
             </Box>
 
             <Card sx={{ flex: 1, borderRadius: 3 }}>
               <CardContent>
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" color="text.primary">
                   Total de Questões
                 </Typography>
                 <Typography fontWeight={700} fontSize={22}>
-                  96
+                  {resultado ? resultado.totalQuestoes : '0'}
                 </Typography>
                 <Chip
                   label="100% Concluído"
@@ -86,30 +156,30 @@ export const Resultado = () => {
               </CardContent>
             </Card>
 
-            <Card sx={{ flex: 1, borderRadius: 3, bgcolor: "#f0fdf4" }}>
+            <Card sx={{ flex: 1, borderRadius: 3}}>
               <CardContent>
                 <Typography variant="caption" color="text.secondary">
                   Acertos
                 </Typography>
                 <Typography fontWeight={700} fontSize={22} color="success.main">
-                  77
+                  {resultado ? resultado.totalAcertos : '0'}
                 </Typography>
                 <Typography variant="caption" color="success.main">
-                  +80% de precisão
+                  {resultado ? `+${Math.round((resultado.totalAcertos / resultado.totalQuestoes) * 100)}% de precisão` : 'Carregando...'}
                 </Typography>
               </CardContent>
             </Card>
 
-            <Card sx={{ flex: 1, borderRadius: 3, bgcolor: "error.light" }}>
+            <Card sx={{ flex: 1, borderRadius: 3}}>
               <CardContent>
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" color="text.primary">
                   Erros
                 </Typography>
-                <Typography fontWeight={700} fontSize={22} color="error.main">
-                  19
+                <Typography fontWeight={700} fontSize={22} color="text.primary">
+                  {resultado ? resultado.totalErros : '0'}
                 </Typography>
-                <Typography variant="caption" color="error.main">
-                  Focar em Português
+                <Typography variant="caption" color="text.primary">
+                  {resultado ? `-${Math.round((resultado.totalErros / resultado.totalQuestoes) * 100)}% de precisão` : 'Carregando...'}
                 </Typography>
               </CardContent>
             </Card>
@@ -122,79 +192,61 @@ export const Resultado = () => {
       </Box>
 
       <Stack spacing={2}>
-        <Card sx={{ borderRadius: 3 }}>
-          <CardContent>
-            <Box display="flex" justifyContent="space-between" mb={1}>
-              <Box display="flex" gap={2} alignItems="center">
-                <Chip label="01" color="success" />
-                <Typography fontWeight={600}>
-                  Língua Portuguesa · Sintaxe
-                </Typography>
-                <Chip
-                  icon={<CheckCircleIcon />}
-                  label="Correta"
-                  color="success"
-                  size="small"
-                />
-              </Box>
+        {resultado?.feedbackQuestoes.map((fb, index) => {
+          const correta = fb.correta;
+          const chipColor = correta ? "success" : "error" as const;
+          const chipLabel = correta ? "Correta" : "Incorreta";
+          const IconeStatus = correta ? CheckCircleIcon : CancelIcon;
 
-              <Typography variant="body2">
-                Sua resposta <b>[A]</b> · Gabarito <b>[A]</b>
-              </Typography>
-            </Box>
-
-            <Divider sx={{ my: 2 }} />
-
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              lineHeight={1.6}
+          return (
+            <Card
+              key={fb.questaoId}
+              sx={{
+                borderRadius: 3,
+                bgcolor: correta ? "background.paper" : "background.default",
+              }}
             >
-              Nesta questão, o termo destacado funciona como objeto direto
-              preposicionado. A preposição “a” é exigida pelo verbo “amar” para
-              dar ênfase ao objeto, técnica comum na literatura clássica cobrada
-              pela EEAR.
-            </Typography>
-          </CardContent>
-        </Card>
+              <CardContent>
+                <Box display="flex" justifyContent="space-between" mb={1}>
+                  <Box display="flex" gap={2} alignItems="center">
+                    <Chip label={String(index + 1).padStart(2, "0")} color={chipColor} />
+                    <Typography fontWeight={600}>
+                      Questão {index + 1}
+                    </Typography>
+                    <Chip
+                      icon={<IconeStatus />}
+                      label={chipLabel}
+                      color={chipColor}
+                      size="small"
+                    />
+                  </Box>
 
-        <Card sx={{ borderRadius: 3, bgcolor: "background.default" }}>
-          <CardContent>
-            <Box display="flex" justifyContent="space-between" mb={1}>
-              <Box display="flex" gap={2} alignItems="center">
-                <Chip label="02" color="error" />
-                <Typography fontWeight={600}>
-                  Física · Termodinâmica
+                  <Typography variant="body2">
+                    Sua resposta <b>[{fb.respostaUsuario}]</b> · Gabarito <b>[{fb.respostaCorreta}]</b>
+                  </Typography>
+                </Box>
+
+                <Typography
+                  variant="body2"
+                  color="text.primary"
+                  sx={{ mt: 1 }}
+                >
+                  {fb.enunciado}
                 </Typography>
-                <Chip
-                  icon={<CancelIcon />}
-                  label="Incorreta"
-                  color="error"
-                  size="small"
-                />
-              </Box>
 
-              <Typography variant="body2">
-                Sua resposta <b>[C]</b> · Gabarito <b>[D]</b>
-              </Typography>
-            </Box>
+                <Divider sx={{ my: 2 }} />
 
-            <Divider sx={{ my: 2 }} />
-
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              lineHeight={1.6}
-            >
-              A temperatura deve ser convertida para Kelvin.
-              <br />
-              T = 27°C + 273 = 300K
-              <br />
-              Como o volume é constante, o aumento da temperatura absoluta dobra
-              a pressão.
-            </Typography>
-          </CardContent>
-        </Card>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  lineHeight={1.6}
+                >
+                  {fb.explicacao}
+                </Typography>
+              </CardContent>
+            </Card>
+          );
+        })}
       </Stack>
 
       <Card
@@ -214,10 +266,10 @@ export const Resultado = () => {
         >
           <Box>
             <Typography fontWeight={700} color="inherit">
-              Excelente progresso, aluno!
+              {mensagemFinal.titulo}
             </Typography>
             <Typography variant="body2" color="inherit">
-              Você conquistou 19 pontos de melhoria hoje.
+              {mensagemFinal.descricao}
             </Typography>
           </Box>
 

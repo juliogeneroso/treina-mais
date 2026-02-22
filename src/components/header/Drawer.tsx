@@ -49,8 +49,6 @@ import { useColorMode } from "../../theme";
 
 const drawerWidth = 240;
 
-const pages = ["Dashboard", "Simulados", "Baralhos"];
-
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
   open?: boolean;
 }>(({ theme }) => ({

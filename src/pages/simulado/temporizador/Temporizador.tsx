@@ -2,26 +2,38 @@ import { useEffect, useState } from "react"
 import { Box, Card, CardContent, Typography, Button } from "@mui/material"
 
 interface TemporizadorProps {
-    duracaoInicialSegundos: number | null
+    simuladoId: number | string
+    duracaoTotalSegundos: number
     onTempoEsgotado: () => void
     onPausarESair: () => void
 }
 
-export const Temporizador = ({ duracaoInicialSegundos, onTempoEsgotado, onPausarESair }: TemporizadorProps) => {
-    const [tempoRestanteSegundos, setTempoRestanteSegundos] = useState<number | null>(duracaoInicialSegundos)
+export const Temporizador = ({ simuladoId, duracaoTotalSegundos, onTempoEsgotado, onPausarESair }: TemporizadorProps) => {
+    const storageKeyTempo = `simulado_tempo_restante_${simuladoId}`
+
+    const [tempoRestanteSegundos, setTempoRestanteSegundos] = useState<number>(() => {
+        if (!duracaoTotalSegundos) return 0
+        try {
+            const salvo = window.localStorage.getItem(storageKeyTempo)
+            if (salvo) {
+                const valor = Number(salvo)
+                if (!Number.isNaN(valor) && valor >= 0) {
+                    return valor
+                }
+            }
+        } catch {
+            // se localStorage falhar, usa a duração total
+        }
+        return duracaoTotalSegundos
+    })
 
     useEffect(() => {
-        setTempoRestanteSegundos(duracaoInicialSegundos)
-    }, [duracaoInicialSegundos])
-
-    useEffect(() => {
-        if (tempoRestanteSegundos == null || tempoRestanteSegundos <= 0) {
+        if (tempoRestanteSegundos <= 0) {
             return
         }
 
         const id = window.setInterval(() => {
             setTempoRestanteSegundos(prev => {
-                if (prev == null) return prev
                 if (prev <= 1) {
                     window.clearInterval(id)
                     onTempoEsgotado()
@@ -36,10 +48,29 @@ export const Temporizador = ({ duracaoInicialSegundos, onTempoEsgotado, onPausar
         }
     }, [tempoRestanteSegundos, onTempoEsgotado])
 
-    const minutos = tempoRestanteSegundos != null ? Math.floor(tempoRestanteSegundos / 60) : 0
-    const segundos = tempoRestanteSegundos != null ? tempoRestanteSegundos % 60 : 0
+    useEffect(() => {
+        return () => {
+            try {
+                window.localStorage.setItem(storageKeyTempo, String(tempoRestanteSegundos))
+            } catch {
+                // ignore falhas ao salvar
+            }
+        }
+    }, [storageKeyTempo, tempoRestanteSegundos])
+
+    const minutos = Math.floor(tempoRestanteSegundos / 60)
+    const segundos = tempoRestanteSegundos % 60
     const tempoFormatado = `${String(minutos).padStart(2, "0")}:${String(segundos).padStart(2, "0")}`
-    const tempoEsgotado = tempoRestanteSegundos != null && tempoRestanteSegundos <= 0
+    const tempoEsgotado = tempoRestanteSegundos <= 0
+
+    const handlePausarClick = () => {
+        try {
+            window.localStorage.setItem(storageKeyTempo, String(tempoRestanteSegundos))
+        } catch {
+            // ignore falhas ao salvar
+        }
+        onPausarESair()
+    }
 
     return (
         <Box
@@ -75,7 +106,7 @@ export const Temporizador = ({ duracaoInicialSegundos, onTempoEsgotado, onPausar
                         fullWidth
                         variant="outlined"
                         size="small"
-                        onClick={onPausarESair}
+                        onClick={handlePausarClick}
                         sx={{ textTransform: "none" }}
                     >
                         Pausar e sair

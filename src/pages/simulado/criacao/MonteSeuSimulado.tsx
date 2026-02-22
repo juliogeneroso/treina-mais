@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box, Typography, Grid, Paper, Button, Slider, ToggleButton,
   ToggleButtonGroup, FormControlLabel, TextField,
@@ -125,7 +125,7 @@ const MonteSeuSimulado = () => {
     }).then((data) => {
       console.log('Simulado criado com sucesso:', data);
       // Redirecionar para a página do simulado ativo
-      window.location.href = '/simulado/pendente';
+      window.location.href = '/simulado';
     }).catch((err: HttpError) => {
       enqueueSnackbar(err.message || 'Erro ao criar simulado', { variant: 'error' });
       console.error('Erro ao criar simulado:', err);
@@ -433,12 +433,6 @@ const MonteSeuSimulado = () => {
                 Iniciar Simulado
               </Button>
 
-              {/* <Box sx={{ mt: 4, p: 2, bgcolor: '#fffbeb', borderRadius: 3, border: '1px solid #fef3c7', display: 'flex', gap: 1.5 }}>
-                <InfoOutlinedIcon sx={{ color: '#d97706' }} />
-                <Typography variant="caption" sx={{ color: '#92400e', fontWeight: '500' }}>
-                  Você ainda pode adicionar mais 76 questões para atingir o máximo recomendado pela banca EEAR.
-                </Typography>
-              </Box> */}
             </Card>
           </Grid>
         </Grid>

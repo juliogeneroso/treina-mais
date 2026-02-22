@@ -20,7 +20,7 @@ import type { DesempenhoUsuarioResponse } from '../../interfaces/progresso/progr
 export default function Dashboard() {
   const { user } = useAppSelector((state: RootState) => state.auth)
   const [desempenho, setDesempenho] = useState<DesempenhoUsuarioResponse | null>(null)
-   const { request, isLoading } = useApi()
+   const { request } = useApi()
 
    useEffect(() => {
     request(`/api/usuario/progresso/${user?.id}`, {
