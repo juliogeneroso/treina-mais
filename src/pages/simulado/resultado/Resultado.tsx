@@ -249,6 +249,7 @@ export const Resultado = () => {
         })}
       </Stack>
 
+      {percentual < 100 && (
       <Card
         sx={{
           mt: 5,
@@ -288,6 +289,7 @@ export const Resultado = () => {
           </Button>
         </CardContent>
       </Card>
+      )}
     </Box>
   );
 };
