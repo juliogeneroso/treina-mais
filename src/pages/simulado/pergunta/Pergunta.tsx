@@ -50,9 +50,10 @@ export const Pergunta = ({
   return (
     <Card
       sx={{
-        maxWidth: 760,
+        width: "100%",
+        maxWidth: { xs: "100%", md: 860, lg: 920 },
         mx: "auto",
-        mt: 6,
+        mt: 4,
         borderRadius: 4,
         boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
       }}

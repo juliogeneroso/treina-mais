@@ -6,7 +6,7 @@ import { Box, CircularProgress, Typography, Dialog, DialogTitle, DialogContent, 
 import type { SimuladoAtivoResponse, Questao } from "../../interfaces/simulado/simulado-ativo.interface";
 import SimuladoPendente from "./pendente/SimuladoPendente";
 import { ListasPerguntas } from "./pergunta/ListasPerguntas";
-import { Temporizador } from "./Temporizador";
+import { Temporizador } from "./temporizador/Temporizador";
 
 export const Simulado = () => {
     const { request, isLoading } = useApi();
@@ -139,29 +139,38 @@ export const Simulado = () => {
                     sx={{
                         display: "flex",
                         gap: 3,
-                        alignItems: "flex-start",
-                        height: "calc(100vh - 160px)",
+                        alignItems: { xs: "stretch", md: "flex-start" },
+                        flexDirection: { xs: "column", md: "row" },
+                        height: { xs: "auto", md: "calc(100vh - 160px)" },
                     }}
                 >
                     <Box
                         sx={{
-                            flexBasis: "80%",
+                            flexBasis: { xs: "100%", md: "80%" },
                             flexShrink: 0,
-                            pr: 2,
+                            pr: { xs: 0, md: 2 },
                             overflowY: "auto",
                             display: "flex",
                             gap: 2,
                         }}
                     >
-                        {/* Conteúdo da pergunta (85% dos 80%) */}
+                        {/* Conteúdo da pergunta e temporizador */}
                         <Box
                             sx={{
-                                flexBasis: "85%",
-                                flexShrink: 0,
+                                flex: 1,
                                 display: "flex",
+                                flexDirection: { xs: "column", md: "row" },
+                                alignItems: { xs: "stretch", md: "flex-start" },
                                 justifyContent: "center",
+                                gap: 2,
                             }}
                         >
+                            {/* Card de temporizador */}
+                            <Temporizador
+                                duracaoInicialSegundos={duracaoInicialSegundos}
+                                onTempoEsgotado={handleTempoEsgotado}
+                                onPausarESair={handlePausarESair}
+                            />
                             <Pergunta
                                 questao={questaoAtual}
                                 indice={indiceAtual}
@@ -177,12 +186,7 @@ export const Simulado = () => {
                             />
                         </Box>
 
-                        {/* Card de temporizador (15% dos 80%) */}
-                        <Temporizador
-                            duracaoInicialSegundos={duracaoInicialSegundos}
-                            onTempoEsgotado={handleTempoEsgotado}
-                            onPausarESair={handlePausarESair}
-                        />
+                      
                     </Box>
 
                     {/* Lista lateral de questões (20%) */}
