@@ -8,19 +8,73 @@ import {
   LinearProgress,
   Chip,
   Divider,
+  Skeleton,
 } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import BoltIcon from "@mui/icons-material/Bolt";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
-import FunctionsIcon from "@mui/icons-material/Functions";
-import TranslateIcon from "@mui/icons-material/Translate";
+import { useApi } from "../../services/useAPI";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { enqueueSnackbar } from "notistack";
+
+interface FlashCardResponse {
+  pendentesHoje: number;
+  metaDiariaPercentual: number;
+  baralhos: {
+    pendentesHoje: number;
+    titulo: string;
+    totalCartoes: number;
+    temaNome: string;
+    id: number;
+  }[];
+}
 
 export const FlashCard = () => {
+  const { request } = useApi();
+  const [flashCardData, setFlashCardData] = useState<FlashCardResponse | null>(null);
+  const [showAllDecks, setShowAllDecks] = useState(false);
+  const navigate = useNavigate();
+  const [loadingDecks, setLoadingDecks] = useState(true);
+
+  useEffect(() => {
+    const fetchFlashCardData = async () => {
+        setLoadingDecks(true);
+        await request("/api/flashCard/dashboard", { method: "GET" , withAuth: true })
+          .then((data) => {
+            const d = data as FlashCardResponse;
+            setFlashCardData(d);
+          })
+          .catch((error) => {
+            enqueueSnackbar("Erro ao carregar dados do FlashCard. Tente novamente mais tarde.", { variant: "error" });
+            console.error("Erro ao buscar dados do FlashCard:", error);
+          })
+          .finally(() => {
+            setLoadingDecks(false);
+          });
+    };
+     fetchFlashCardData();
+  }, []);
+
+  const decks = flashCardData?.baralhos ?? [];
+  const displayedDecks = showAllDecks ? decks : decks.slice(0, 3);
+
+  const topPriorityDeck =
+    decks.length > 0
+      ? decks.reduce((max, deck) =>
+          deck.pendentesHoje > max.pendentesHoje ? deck : max
+        )
+      : null;
+
+  const handleStartTopPriority = () => {
+    if (!topPriorityDeck) return;
+    navigate(`/flashcard/estudo/${topPriorityDeck.id}`);
+  };
+
   return (
     <Box sx={{ maxWidth: 1200, mx: "auto", p: 4 }}>
       <Box mb={4}>
         <Typography variant="h5" fontWeight={700}>
-          Você tem <Box component="span" color="primary.main">45 cartões</Box>{" "}
+          Você tem <Box component="span" color="primary.main">{flashCardData?.pendentesHoje ?? 0} cartões</Box>{" "}
           pendentes hoje
         </Typography>
         <Typography variant="body2" color="text.secondary">
@@ -69,19 +123,23 @@ export const FlashCard = () => {
                 sx={{ mb: 1 }}
               />
               <Typography fontWeight={700} fontSize={18}>
-                Português · Sintaxe
+                {topPriorityDeck
+                  ? `${topPriorityDeck.titulo} · ${topPriorityDeck.temaNome}`
+                  : "Nenhum baralho prioritário"}
               </Typography>
               <Typography
                 variant="body2"
                 color="text.secondary"
                 sx={{ maxWidth: 520, my: 1 }}
               >
-                Este é o baralho com mais revisões pendentes. Mantenha o foco nos
-                tópicos de maior peso para a EEAR/EAGS (Sujeito, Predicado e
-                Complementos).
+                {topPriorityDeck
+                  ? "Este é o baralho com mais revisões pendentes. Mantenha o foco nos tópicos de maior peso para seu concurso!"
+                  : "Nenhum baralho com revisões pendentes no momento."}
               </Typography>
               <Typography variant="body2" fontWeight={600}>
-                32 cartões
+                {topPriorityDeck
+                  ? `${topPriorityDeck.pendentesHoje} cartões pendentes`
+                  : "0 cartões pendentes"}
               </Typography>
             </Box>
 
@@ -89,6 +147,8 @@ export const FlashCard = () => {
               variant="contained"
               endIcon={<PlayArrowIcon />}
               sx={{ borderRadius: 2, px: 3 }}
+              disabled={!topPriorityDeck}
+              onClick={handleStartTopPriority}
             >
               Começar Agora
             </Button>
@@ -98,74 +158,98 @@ export const FlashCard = () => {
 
       <Box mb={3} display="flex" justifyContent="space-between">
         <Typography fontWeight={600}>Meus Baralhos</Typography>
-        <Typography
-          variant="body2"
-          color="primary.main"
-          sx={{ cursor: "pointer" }}
-        >
-          Ver todos →
-        </Typography>
+        {!loadingDecks && decks.length > 3 && (
+          <Typography
+            variant="body2"
+            color="primary.main"
+            sx={{ cursor: "pointer" }}
+            onClick={() => setShowAllDecks((prev) => !prev)}
+          >
+            {showAllDecks ? "Ver menos ↑" : "Ver todos →"}
+          </Typography>
+        )}
       </Box>
 
       <Stack direction={{ xs: "column", md: "row" }} spacing={3} mb={5}>
-        <Card sx={{ flex: 1, borderRadius: 3 }}>
-          <CardContent>
-            <Box display="flex" justifyContent="space-between" mb={1}>
-              <FunctionsIcon color="warning" />
-              <Chip label="12 novos" color="warning" size="small" />
-            </Box>
-            <Typography fontWeight={600}>Matemática</Typography>
-            <Typography variant="body2" color="text.secondary" mb={2}>
-              Álgebra e Trigonometria
-            </Typography>
-            <LinearProgress
-              variant="determinate"
-              value={65}
-              sx={{ height: 8, borderRadius: 4 }}
-              color="warning"
-            />
-            <Typography variant="caption">65%</Typography>
-          </CardContent>
-        </Card>
+        {loadingDecks ? (
+          <>
+            {[1, 2, 3].map((i) => (
+              <Card key={i} sx={{ flex: 1, borderRadius: 3 }}>
+                <CardContent>
+                  <Box display="flex" justifyContent="space-between" mb={1}>
+                    <Skeleton variant="circular" width={32} height={32} />
+                    <Skeleton variant="rounded" width={80} height={24} />
+                  </Box>
+                  <Skeleton width="60%" height={24} />
+                  <Skeleton width="80%" height={20} sx={{ mt: 1 }} />
+                  <Skeleton
+                    variant="rounded"
+                    height={8}
+                    sx={{ mt: 2, borderRadius: 4 }}
+                  />
+                  <Skeleton width={40} height={16} sx={{ mt: 1 }} />
+                </CardContent>
+              </Card>
+            ))}
+          </>
+        ) : displayedDecks.length > 0 ? (
+          displayedDecks.map((baralho) => {
+            const estudados = baralho.totalCartoes - baralho.pendentesHoje;
+            const progresso =
+              baralho.totalCartoes > 0
+                ? Math.round((estudados / baralho.totalCartoes) * 100)
+                : 0;
+            const revisado = baralho.pendentesHoje === 0;
 
-        <Card sx={{ flex: 1, borderRadius: 3 }}>
-          <CardContent>
-            <Box display="flex" justifyContent="space-between" mb={1}>
-              <BoltIcon color="success" />
-              <Chip label="Revisado" color="success" size="small" />
-            </Box>
-            <Typography fontWeight={600}>Física</Typography>
-            <Typography variant="body2" color="text.secondary" mb={2}>
-              Mecânica e Eletricidade
-            </Typography>
-            <LinearProgress
-              variant="determinate"
-              value={100}
-              sx={{ height: 8, borderRadius: 4 }}
-              color="success"
-            />
-            <Typography variant="caption">100%</Typography>
-          </CardContent>
-        </Card>
-
-        <Card sx={{ flex: 1, borderRadius: 3 }}>
-          <CardContent>
-            <Box display="flex" justifyContent="space-between" mb={1}>
-              <TranslateIcon color="primary" />
-              <Chip label="5 pendentes" color="primary" size="small" />
-            </Box>
-            <Typography fontWeight={600}>Inglês</Typography>
-            <Typography variant="body2" color="text.secondary" mb={2}>
-              Interpretação e Vocabulário
-            </Typography>
-            <LinearProgress
-              variant="determinate"
-              value={42}
-              sx={{ height: 8, borderRadius: 4 }}
-            />
-            <Typography variant="caption">42%</Typography>
-          </CardContent>
-        </Card>
+            return (
+              <Card key={baralho.id} sx={{ flex: 1, borderRadius: 3 }}>
+                <CardContent>
+                  <Box display="flex" justifyContent="space-between" mb={1}>
+                    <MenuBookIcon color={revisado ? "success" : "primary"} />
+                    <Chip
+                      label={
+                        revisado
+                          ? "Revisado"
+                          : `${baralho.pendentesHoje} pendentes`
+                      }
+                      color={revisado ? "success" : "primary"}
+                      size="small"
+                    />
+                  </Box>
+                  <Typography fontWeight={600}>{baralho.titulo}</Typography>
+                  <Typography variant="body2" color="text.secondary" mb={2}>
+                    {baralho.temaNome}
+                  </Typography>
+                  <LinearProgress
+                    variant="determinate"
+                    value={progresso}
+                    sx={{ height: 8, borderRadius: 4 }}
+                    color={revisado ? "success" : "primary"}
+                  />
+                  <Box
+                    mt={1}
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Typography variant="caption">{progresso}%</Typography>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={() => navigate(`/flashcard/estudo/${baralho.id}`)}
+                    >
+                      Iniciar
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            );
+          })
+        ) : (
+          <Typography variant="body2" color="text.secondary">
+            Nenhum baralho encontrado.
+          </Typography>
+        )}
       </Stack>
 
       <Divider sx={{ mb: 3 }} />

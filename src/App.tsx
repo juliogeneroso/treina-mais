@@ -3,6 +3,7 @@ import PersistentDrawerLeft from "./components/header/Drawer";
 import { Simulado } from "./pages/simulado/Simulado";
 import { Resultado } from "./pages/simulado/resultado/Resultado";
 import { FlashCard } from "./pages/flashcard/FlashCard";
+import FlashcardEstudo from "./pages/flashcard/FlashcardEstudo";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Desempenho from "./pages/desempenho/Desempenho";
 import MonteSeuSimulado from "./pages/simulado/criacao/MonteSeuSimulado";
@@ -29,13 +30,14 @@ function App() {
         {/* Rotas Protegidas */}
         <Route element={<ProtectedRoute />}>
           <Route element={<PersistentDrawerLeft />}>
-
+            <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/simulado" element={<Simulado />} />
             <Route path="/simulado/criar" element={<MonteSeuSimulado />} />
             <Route path="/simulado/resultado" element={<Resultado />} />
             {/* <Route path="/baralhos" element={<Resultado />} /> */}
             <Route path="/flashcard" element={<FlashCard />} />
+            <Route path="/flashcard/estudo/:baralhoId" element={<FlashcardEstudo />} />
             <Route path="/desempenho" element={<Desempenho />} />
 
           </Route>
