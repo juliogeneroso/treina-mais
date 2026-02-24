@@ -233,13 +233,6 @@ export const FlashCard = () => {
                     alignItems="center"
                   >
                     <Typography variant="caption">{progresso}%</Typography>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      onClick={() => navigate(`/flashcard/estudo/${baralho.id}`)}
-                    >
-                      Iniciar
-                    </Button>
                   </Box>
                 </CardContent>
               </Card>
