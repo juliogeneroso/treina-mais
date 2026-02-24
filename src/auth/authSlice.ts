@@ -60,8 +60,15 @@ const authSlice = createSlice({
 
       localStorage.clear()
     },
+
+    setUserAvatar(state, action: PayloadAction<string>) {
+      if (state.user) {
+        state.user = { ...state.user, avatarCodigo: action.payload }
+        localStorage.setItem('user', JSON.stringify(state.user))
+      }
+    },
   },
 })
   
-export const { login, logout, setAccessToken, setAccessRefreshToken } = authSlice.actions
+export const { login, logout, setAccessToken, setAccessRefreshToken, setUserAvatar } = authSlice.actions
 export default authSlice.reducer

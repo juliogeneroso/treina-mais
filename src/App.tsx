@@ -13,6 +13,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
 import EmConstrucao from "./pages/redirecionamentos/EmConstrucao";
 import NaoEncontrado from "./pages/redirecionamentos/NaoEncontrado";
+import { Configuracao } from "./pages/meuPerfil/Configuracao";
 
 function App() {
   return (
@@ -39,7 +40,7 @@ function App() {
             <Route path="/flashcard" element={<FlashCard />} />
             <Route path="/flashcard/estudo/:baralhoId" element={<FlashcardEstudo />} />
             <Route path="/desempenho" element={<Desempenho />} />
-
+            <Route path="/configuracao" element={<Configuracao />} />
           </Route>
         </Route>
          <Route path="*" element={<NaoEncontrado />} />

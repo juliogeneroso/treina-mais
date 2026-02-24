@@ -8,6 +8,7 @@ import SimuladoPendente from "./pendente/SimuladoPendente";
 import { ListasPerguntas } from "./pergunta/ListasPerguntas";
 import { Temporizador } from "./temporizador/Temporizador";
 import type { SimuladoFinalizadoResponse } from "../../interfaces/simulado/responder-simulado.interface";
+import { enqueueSnackbar } from "notistack";
 
 export const Simulado = () => {
     const { request, isLoading } = useApi();
@@ -21,9 +22,12 @@ export const Simulado = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        const controller = new AbortController();
+
         request('/api/simulado/ativo', {
             method: 'GET',
-            withAuth: true
+            withAuth: true,
+            signal: controller.signal
         }).then((data) => {
             // 200 → data com simulado em andamento
             // 204 → useApi retorna null → redireciona para criação
@@ -34,9 +38,17 @@ export const Simulado = () => {
                 setSimuladoAtivo(d);
             }
         }).catch((err) => {
+            if (err?.name === 'AbortError') {
+                return;
+            }
             console.error('Erro ao verificar simulado ativo:', err);
+            enqueueSnackbar('Erro ao carregar simulado ativo. Tente novamente mais tarde.', { variant: 'error' });
             navigate('/dashboard');
         });
+
+        return () => {
+            controller.abort();
+        };
     }, []);
 
     const questoes: Questao[] = simuladoAtivo?.questoes ?? [];

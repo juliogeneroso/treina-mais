@@ -16,6 +16,7 @@ interface RequestOptions {
   headers?: Record<string, string>
   withAuth?: boolean
   retry?: boolean
+  signal?: AbortSignal
 }
 
 export function useApi() {
@@ -23,7 +24,7 @@ export function useApi() {
 
   const { accessToken, refreshToken } = useAppSelector(
     (state: RootState) => state.auth
-  )
+  ) as { accessToken: string | null; refreshToken: string | null }
 
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -68,7 +69,8 @@ export function useApi() {
       body,
       headers = {},
       withAuth = false,
-      retry = true
+      retry = true,
+      signal
     }: RequestOptions = {}
   ): Promise<T> => {
     try {
@@ -88,7 +90,8 @@ export function useApi() {
       const response = await fetch(`${API_URL}${url}`, {
         method,
         headers: finalHeaders,
-        body: body ? JSON.stringify(body) : undefined
+        body: body ? JSON.stringify(body) : undefined,
+        signal
       })
 
       /**
@@ -143,6 +146,11 @@ export function useApi() {
 
       return (await response.json()) as T
     } catch (err: any) {
+      // Ignora erros de abort (cancelamento de requisição)
+      if (err?.name === 'AbortError') {
+        setIsLoading(false)
+        return Promise.reject(err)
+      }
       const message =
         err?.message || 'Ocorreu um erro inesperado.'
 

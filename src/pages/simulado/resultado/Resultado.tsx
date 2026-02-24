@@ -284,6 +284,9 @@ export const Resultado = () => {
               borderRadius: 2,
               "&:hover": { bgcolor: "action.hover" },
             }}
+            onClick={() => {
+              navigate('/flashcard');
+            }}
           >
             Gerar Flashcards
           </Button>

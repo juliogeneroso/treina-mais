@@ -128,7 +128,7 @@ export default function PersistentDrawerLeft() {
   const { mode, toggleColorMode } = useColorMode();
   const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(false);
-  const isAdmin = true; // mudar aqui
+  const isAdmin = false; // mudar aqui
   const [anchorNotif, setAnchorNotif] = React.useState<null | HTMLElement>(
     null
   );
@@ -141,7 +141,7 @@ export default function PersistentDrawerLeft() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const {user} = useAppSelector((state: RootState) => state.auth);
+  const { user } = useAppSelector((state: RootState) => state.auth) as { user?: any };
   const avatarSrc = user?.avatarCodigo ? avatarMap[user.avatarCodigo] : undefined;
 
   const handleLogout = () => {

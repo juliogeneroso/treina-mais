@@ -104,7 +104,7 @@ export default function Desempenho() {
   const { request: historicoSimulado } = useApi();
   const [desempenhoData, setDesempenhoData] = useState<DesempenhoResponse | null>(null);
   const [historicoSimuladoData, setHistoricoSimuladoData] = useState<HistoricoSimuladoResponse | null>(null);
-  const { user } = useAppSelector((state: RootState) => state.auth);
+  const user = useAppSelector((state: RootState) => (state as any).auth.user);
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
 
