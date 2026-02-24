@@ -147,7 +147,7 @@ export const FlashCard = () => {
               variant="contained"
               endIcon={<PlayArrowIcon />}
               sx={{ borderRadius: 2, px: 3 }}
-              disabled={!topPriorityDeck}
+              disabled={!topPriorityDeck || topPriorityDeck.pendentesHoje === 0}
               onClick={handleStartTopPriority}
             >
               Começar Agora

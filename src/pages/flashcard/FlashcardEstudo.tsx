@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, Stack, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, CircularProgress, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useApi } from "../../services/useAPI";
@@ -23,6 +23,7 @@ const FlashcardEstudo = () => {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [answeredCardIds, setAnsweredCardIds] = useState<number[]>([]);
   const [finished, setFinished] = useState(false);
+  const [cardVisible, setCardVisible] = useState(true);
 
   const currentCard = history[currentIndex] ?? null;
 
@@ -66,32 +67,19 @@ const FlashcardEstudo = () => {
     await carregarPrimeiroDoServidor();
   };
 
+  useEffect(() => {
+    // animação de entrada ao trocar de card
+    setCardVisible(false);
+    const id = setTimeout(() => setCardVisible(true), 30);
+    return () => clearTimeout(id);
+  }, [currentIndex, currentCard?.cartaoId]);
+
   const handleFlip = () => {
     if (!currentCard || !currentCard.cartaoId) return;
     setIsFlipped((prev) => !prev);
   };
 
-  const handleAnswer = async (value: number) => {
-    setLoading(true);
-    await request(`/api/cartoes/${currentCard?.cartaoId}/responder?qualidade=${value}`, {
-      method: "POST",
-      withAuth: true,
-      body: JSON.stringify({ resposta: value }),
-    }).then((data) => {
-         const d = data as FlashcardEstudoResponse;
-
-      setHistory((prev) => {
-        const truncated = prev.slice(0, currentIndex + 1);
-        const nextHistory = [...truncated, d];
-        setCurrentIndex(nextHistory.length - 1);
-        return nextHistory;
-      });
-      setIsFlipped(false);
-    }).catch((error) => {
-      console.error("Erro ao enviar resposta do cartão:", error);
-      return;
-    });
-
+  const handleAnswer = (value: number) => {
     if (!currentCard || !currentCard.cartaoId) return;
     if (answeredCardIds.includes(currentCard.cartaoId)) return;
     setAnswers((prev) => ({ ...prev, [currentCard.cartaoId as number]: value }));
@@ -108,24 +96,62 @@ const FlashcardEstudo = () => {
       return;
     }
 
-    if (
-      !currentCard ||
-      !currentCard.cartaoId ||
-      respostaSelecionada === undefined
-    ) {
+    if (!currentCard || !currentCard.cartaoId) {
       return;
     }
 
-    if (!answeredCardIds.includes(currentCard.cartaoId)) {
-      setAnsweredCardIds((prev) => [...prev, currentCard.cartaoId as number]);
+    const qualidade = answers[currentCard.cartaoId];
+    if (qualidade === undefined) {
+      return;
     }
 
-    // Se já temos próximo no histórico, apenas navega
-    if (currentIndex < history.length - 1) {
-      setCurrentIndex((prev) => prev + 1);
+    // Não deve reenviar resposta de cartão já respondido
+    if (answeredCardIds.includes(currentCard.cartaoId)) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const data = await request(
+        `/api/cartoes/${currentCard.cartaoId}/responder?qualidade=${qualidade}`,
+        {
+          method: "POST",
+          withAuth: true,
+          body: JSON.stringify({ resposta: qualidade }),
+        }
+      );
+
+      if (data == null) {
+        setFinished(true);
+        return;
+      }
+
+      const d = data as FlashcardEstudoResponse;
+      setFinished(false);
+
+      if (!answeredCardIds.includes(currentCard.cartaoId)) {
+        setAnsweredCardIds((prev) => [...prev, currentCard.cartaoId as number]);
+      }
+
+      setHistory((prev) => {
+        const truncated = prev.slice(0, currentIndex + 1);
+        const nextHistory = [...truncated, d];
+        setCurrentIndex(nextHistory.length - 1);
+        return nextHistory;
+      });
       setIsFlipped(false);
-      return;
+    } catch (error) {
+      console.error("Erro ao enviar resposta do cartão:", error);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleAdvance = () => {
+    if (loading) return;
+    if (currentIndex >= history.length - 1) return;
+    setCurrentIndex((prev) => prev + 1);
+    setIsFlipped(false);
   };
 
   const respostaSelecionada =
@@ -204,6 +230,9 @@ const FlashcardEstudo = () => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  opacity: cardVisible ? 1 : 0,
+                  transform: cardVisible ? "translateX(0)" : "translateX(16px)",
+                  transition: "opacity 0.3s ease, transform 0.3s ease",
                 }}
               >
                 <Box
@@ -325,18 +354,35 @@ const FlashcardEstudo = () => {
         >
           Voltar
         </Button>
-        <Button
-          variant="contained"
-          onClick={handleNext}
-          disabled={
-            loading ||
-            !currentCard ||
-            respostaSelecionada === undefined ||
-            finished
-          }
-        >
-          Responder
-        </Button>
+        {isCurrentCardAnswered ? (
+          <Button
+            variant="contained"
+            onClick={handleAdvance}
+            disabled={loading || currentIndex >= history.length - 1}
+          >
+            Avançar
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            onClick={handleNext}
+            disabled={
+              loading ||
+              !currentCard ||
+              respostaSelecionada === undefined ||
+              finished
+            }
+          >
+            {loading && currentCard ? (
+              <>
+                <CircularProgress size={18} color="inherit" sx={{ mr: 1 }} />
+                Enviando...
+              </>
+            ) : (
+              "Responder"
+            )}
+          </Button>
+        )}
       </Box>
 
       {finished && (

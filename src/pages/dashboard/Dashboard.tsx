@@ -16,11 +16,13 @@ import { useAppSelector } from '../../store/hooks'
 import { useApi } from '../../services/useAPI'
 import { useEffect, useState } from 'react'
 import type { DesempenhoUsuarioResponse } from '../../interfaces/progresso/progresso.interface'
+import { useNavigate } from 'react-router-dom'
 
 export default function Dashboard() {
   const { user } = useAppSelector((state: RootState) => state.auth)
   const [desempenho, setDesempenho] = useState<DesempenhoUsuarioResponse | null>(null)
    const { request } = useApi()
+   const navigate = useNavigate();
 
    useEffect(() => {
     request(`/api/usuario/progresso/${user?.id}`, {
@@ -195,18 +197,21 @@ export default function Dashboard() {
             title: 'Montar Simulado',
             desc: 'Personalize questões por matéria e dificuldade.',
             color: 'primary.light',
+            link: '/simulado'
           },
           {
             icon: <TrendingUpIcon />,
             title: 'Revisar Flashcards',
             desc: 'Use repetição espaçada para memorizar fórmulas.',
             color: 'secondary.light',
+            link: '/flashcard'
           },
           {
             icon: <BarChartIcon />,
             title: 'Meu Desempenho',
             desc: 'Analise sua evolução por disciplina.',
             color: 'success.light',
+            link: '/desempenho'
           },
         ].map((item) => (
           <Card
@@ -220,6 +225,7 @@ export default function Dashboard() {
                 boxShadow: 8,
               },
             }}
+            onClick={() => {navigate(item.link)}}
           >
             <CardContent sx={{ p: 3 }}>
               <Avatar sx={{ bgcolor: item.color, mb: 2 }}>
