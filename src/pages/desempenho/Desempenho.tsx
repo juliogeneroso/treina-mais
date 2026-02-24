@@ -210,7 +210,8 @@ export default function Desempenho() {
         Desempenho Geral
       </Typography>
       <Typography color="text.secondary" mb={5}>
-        Acompanhe sua evolução detalhada para os exames EEAR/EAGS
+        Acompanhe sua evolução detalhada para seus concursos. 
+        Veja métricas, gráficos e histórico de simulados para identificar seus pontos fortes e áreas de melhoria. Mantenha o foco no seu objetivo!
       </Typography>
 
       {/* ABAS INTERNAS */}
