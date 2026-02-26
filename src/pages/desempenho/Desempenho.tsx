@@ -43,15 +43,6 @@ import avatar12 from "../../assets/avatar/avatar_12.png";
 import { useNavigate } from 'react-router-dom';
 import HistoricoSimuladoList from './HistoricoSimuladoList';
 
-const evolucaoData = [
-  { mes: 'Jan', acerto: 62 },
-  { mes: 'Fev', acerto: 65 },
-  { mes: 'Mar', acerto: 72 },
-  { mes: 'Abr', acerto: 80 },
-  { mes: 'Mai', acerto: 74 },
-  { mes: 'Jun', acerto: 85 },
-]
-
 
 interface DesempenhoResponse {
   nome: string;
@@ -160,12 +151,9 @@ export default function Desempenho() {
               acerto: item.percentual,
             };
           })
-      : evolucaoData.map((item) => ({
-          dia: item.mes,
-          acerto: item.acerto,
-        }));
+      : [];
 
-
+console.log(evolucaoChartData)
   return (
     <Box p={{ xs: 2, md: 4 }}>
 
@@ -339,29 +327,46 @@ export default function Desempenho() {
             Evolução de Desempenho
           </Typography>
 
-          <Box height={320}>
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={evolucaoChartData}>
-                <XAxis dataKey="dia" />
-                <YAxis
-                  tickFormatter={(value) => `${value}%`}
-                  domain={[0, 100]}
-                />
-                <Tooltip
-                  formatter={(value) => `${value ?? 0}%`}
-                  labelFormatter={(label) =>
-                    label != null ? `Dia: ${label}` : ''
-                  }
-                />
-                <Line
-                  type="monotone"
-                  dataKey="acerto"
-                  strokeWidth={4}
-                  dot={{ r: 5 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </Box>
+          {desempenhoData?.evolucao && desempenhoData.evolucao.length > 0 ? (
+            <Box height={320}>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={evolucaoChartData}>
+                  <XAxis dataKey="dia" />
+                  <YAxis
+                    tickFormatter={(value) => `${value}%`}
+                    domain={[0, 100]}
+                  />
+                  <Tooltip
+                    formatter={(value) => `${value ?? 0}%`}
+                    labelFormatter={(label) =>
+                      label != null ? `Dia: ${label}` : ''
+                    }
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="acerto"
+                    strokeWidth={4}
+                    dot={{ r: 5 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </Box>
+          ) : (
+            <Box
+              mt={2}
+              p={2.5}
+              borderRadius={3}
+              bgcolor="action.hover"
+              textAlign="center"
+            >
+              <Typography fontSize={14} color="text.secondary">
+                Ainda não há dados de evolução suficientes para exibir o gráfico.
+              </Typography>
+              <Typography fontSize={13} color="text.disabled" mt={0.5}>
+                Resolva simulados e questões para começar a acompanhar sua evolução aqui.
+              </Typography>
+            </Box>
+          )}
         </CardContent>
       </Card>
 
