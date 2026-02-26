@@ -24,7 +24,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts'
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useApi } from '../../services/useAPI';
 import type { RootState } from '../../store';
 import { useAppSelector } from '../../store/hooks';
@@ -153,7 +153,6 @@ export default function Desempenho() {
           })
       : [];
 
-console.log(evolucaoChartData)
   return (
     <Box p={{ xs: 2, md: 4 }}>
 
