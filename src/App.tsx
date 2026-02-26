@@ -14,6 +14,7 @@ import PublicRoute from "./routes/PublicRoute";
 import EmConstrucao from "./pages/redirecionamentos/EmConstrucao";
 import NaoEncontrado from "./pages/redirecionamentos/NaoEncontrado";
 import { Configuracao } from "./pages/meuPerfil/Configuracao";
+import { Pacotes } from "./pages/pacotes/Pacotes";
 
 function App() {
   return (
@@ -36,7 +37,7 @@ function App() {
             <Route path="/simulado" element={<Simulado />} />
             <Route path="/simulado/criar" element={<MonteSeuSimulado />} />
             <Route path="/simulado/resultado" element={<Resultado />} />
-            {/* <Route path="/baralhos" element={<Resultado />} /> */}
+            <Route path="/pacotes" element={<Pacotes />} />
             <Route path="/flashcard" element={<FlashCard />} />
             <Route path="/flashcard/estudo/:baralhoId" element={<FlashcardEstudo />} />
             <Route path="/desempenho" element={<Desempenho />} />

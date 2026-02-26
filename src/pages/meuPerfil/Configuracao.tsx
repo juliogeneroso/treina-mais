@@ -30,7 +30,7 @@ export interface PacoteAtivo {
 export const Configuracao = () => {
   const { user } = useAppSelector(
     (state: RootState) => state.auth
-  ) as { user?: { id?: string; avatarCodigo?: string; name?: string; email?: string } };
+  ) as unknown as { user?: { id?: string; avatarCodigo?: string; name?: string; email?: string } };
   const dispatch = useAppDispatch();
 
   const [selectedAvatar, setSelectedAvatar] = useState<string>(
@@ -40,6 +40,9 @@ export const Configuracao = () => {
   const [pacotesAtivos, setPacotesAtivos] = useState<PacoteAtivo[]>([]);
   const [isLoadingPacotes, setIsLoadingPacotes] = useState(false);
   const [openSemPacotes, setOpenSemPacotes] = useState(false);
+  const [openConfirmCancelar, setOpenConfirmCancelar] = useState(false);
+  const [pacoteParaCancelar, setPacoteParaCancelar] = useState<PacoteAtivo | null>(null);
+  const [isCancelandoPacote, setIsCancelandoPacote] = useState(false);
   const [nomeCompleto, setNomeCompleto] = useState<string>(user?.name || "");
   const [emailInstitucional, setEmailInstitucional] = useState<string>(user?.email || "");
   const [senhaAtual, setSenhaAtual] = useState<string>("");
@@ -57,7 +60,11 @@ export const Configuracao = () => {
 
   useEffect(() => {
     if (!user?.id) return;
-    setIsLoadingPacotes(true);
+    fetchPacotesAtivos();
+},[]);
+
+const fetchPacotesAtivos = () => {
+  setIsLoadingPacotes(true);
     pacotesAdquiridos(`/api/pacotes/ativos`, {
       method: "GET",
       withAuth: true,
@@ -77,7 +84,7 @@ export const Configuracao = () => {
     .finally(() => {
       setIsLoadingPacotes(false);
     });
-},[]);
+  };
 
   const handleSalvarAlteracoes = () => {
     const nomeValido = nomeCompleto.trim().length > 0;
@@ -156,26 +163,42 @@ export const Configuracao = () => {
   }
 
   const onComprarMaisPacotes = () => {
-    navigate('/comprar-pacotes');
+    navigate('/pacotes');
   }
 
   const cancelarPacote = (pacote: PacoteAtivo) => {
-    if (!window.confirm("Tem certeza que deseja cancelar este pacote?")) return;
+    setPacoteParaCancelar(pacote);
+    setOpenConfirmCancelar(true);
+  };
 
-    cancelarCompra(`/api/pacotes-comprados/${pacote.compraId}/cancelar`, {
+  const handleFecharConfirmarCancelar = () => {
+    setOpenConfirmCancelar(false);
+    setPacoteParaCancelar(null);
+  };
+
+  const handleConfirmarCancelarPacote = () => {
+    if (!pacoteParaCancelar) return;
+
+    setIsCancelandoPacote(true);
+    cancelarCompra(`/api/pacotes-comprados/${pacoteParaCancelar.compraId}/cancelar`, {
       method: "POST",
       withAuth: true,
     })
       .then(() => {
-        setPacotesAtivos((prev) => prev.filter((p) => p.compraId !== pacote.compraId));
+        setPacotesAtivos((prev) => prev.filter((p) => p.compraId !== pacoteParaCancelar.compraId));
         enqueueSnackbar("Pacote cancelado com sucesso.", {
           variant: "success",
         });
+        handleFecharConfirmarCancelar();
+        fetchPacotesAtivos(); // Recarrega os pacotes ativos para refletir a mudança
       })
       .catch(() => {
         enqueueSnackbar("Erro ao cancelar pacote. Tente novamente.", {
           variant: "error",
         });
+      })
+      .finally(() => {
+        setIsCancelandoPacote(false);
       });
   };
 
@@ -334,6 +357,36 @@ export const Configuracao = () => {
           </Button>
           <Button onClick={() => { setOpenSemPacotes(false); onComprarMaisPacotes(); }} color="primary" variant="contained">
             Ver pacotes disponíveis
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openConfirmCancelar} onClose={handleFecharConfirmarCancelar}>
+        <DialogTitle>Confirmar cancelamento</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Tem certeza que deseja cancelar o pacote
+            {" "}
+            <strong>{pacoteParaCancelar?.nomePacote}</strong>?
+            {" "}
+            Essa ação não poderá ser desfeita.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleFecharConfirmarCancelar} color="inherit">
+            Voltar
+          </Button>
+          <Button
+            onClick={handleConfirmarCancelarPacote}
+            color="error"
+            variant="contained"
+            disabled={isCancelandoPacote}
+          >
+            {isCancelandoPacote ? (
+              <CircularProgress size={20} color="inherit" />
+            ) : (
+              "Cancelar pacote"
+            )}
           </Button>
         </DialogActions>
       </Dialog>

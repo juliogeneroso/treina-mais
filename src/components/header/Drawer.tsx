@@ -29,7 +29,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
-import { Analytics, AutoAwesomeMotion, Dashboard, EditNote, Settings } from "@mui/icons-material";
+import { Analytics, AutoAwesomeMotion, Dashboard, EditNote, Settings, Star } from "@mui/icons-material";
 import avatar01 from "../../assets/avatar/avatar_01.png";
 import avatar02 from "../../assets/avatar/avatar_02.png";
 import avatar03 from "../../assets/avatar/avatar_03.png";
@@ -192,7 +192,7 @@ export default function PersistentDrawerLeft() {
                   <DarkModeIcon fontSize="small" />
                 )}
               </IconButton>
-              <IconButton
+              {/* <IconButton
                 color="inherit"
                 onClick={(e) => setAnchorNotif(e.currentTarget)}
               >
@@ -209,7 +209,7 @@ export default function PersistentDrawerLeft() {
                 transformOrigin={{ vertical: "top", horizontal: "right" }}
               >
                 <MenuItem onClick={() => setAnchorNotif(null)}></MenuItem>
-              </Menu>
+              </Menu> */}
 
               <IconButton
                 color="inherit"
@@ -267,6 +267,28 @@ export default function PersistentDrawerLeft() {
         </DrawerHeader>
         <Divider />
         <List>
+          <ListItem key={"Pacotes"} disablePadding>
+            <ListItemButton
+              component={NavLink}
+              to="/pacotes"
+              sx={{
+                color: "#FFC107",
+                "& .MuiListItemIcon-root": {
+                  color: "#FFC107",
+                },
+                "&.active": {
+                  bgcolor: "rgba(255, 193, 7, 0.08)",
+                  borderRadius: 2,
+                  mx: 1,
+                },
+              }}
+            >
+              <ListItemIcon>
+                <Star />
+              </ListItemIcon>
+              <ListItemText primary={"Pacotes"} />
+            </ListItemButton>
+          </ListItem>
           <ListItem key={"Dashboard"} disablePadding>
               <ListItemButton   
               component={NavLink}
