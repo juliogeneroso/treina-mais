@@ -6,6 +6,7 @@ import {
   Button,
   LinearProgress,
   Avatar,
+  CircularProgress,
 } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
@@ -17,15 +18,54 @@ import { useApi } from '../../services/useAPI'
 import { useEffect, useState } from 'react'
 import type { DesempenhoUsuarioResponse } from '../../interfaces/progresso/progresso.interface'
 import { useNavigate } from 'react-router-dom'
+import { enqueueSnackbar } from 'notistack'
+import image from '../../assets/image-dashboard.png'
+
+interface PacoteAtivo {
+  compraId: number;
+  pacoteId: number;
+  nomePacote: string;
+  dataCompra: string;
+  dataExpiracao: string;
+  ativo: boolean;
+  usuarioId: number;
+  nomeUsuario: string;
+  emailUsuario: string;
+  concursoId: number;
+  nomeConcurso: string;
+  dataDaProva: string;
+  diasRestantes: number;
+}
 
 export default function Dashboard() {
+  const formatarData = (data?: string) => {
+    if (!data) return '--'
+    const date = new Date(data)
+    if (Number.isNaN(date.getTime())) return data
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+  }
+
   const { user } = useAppSelector((state: RootState) => state.auth)
   const [desempenho, setDesempenho] = useState<DesempenhoUsuarioResponse | null>(null)
+   const [pacotesAtivos, setPacotesAtivos] = useState<PacoteAtivo[]>([]);
+   const [openSemPacotes, setOpenSemPacotes] = useState(false);
+  const { request: pacotesAdquiridos } = useApi();
+  const [isLoadingPacotes, setIsLoadingPacotes] = useState(false);
    const { request } = useApi()
    const navigate = useNavigate();
-
+   
    useEffect(() => {
-    request(`/api/usuario/progresso/${user?.id}`, {
+    if (!user?.id) return;
+    fetchPacotesAtivos();
+    fetchProgresso()
+    }, []); 
+
+    const fetchProgresso = () => {
+       request(`/api/usuario/progresso/${user?.id}`, {
       method: 'GET'})
     .then((data) => {
       const p = data as DesempenhoUsuarioResponse;
@@ -33,7 +73,30 @@ export default function Dashboard() {
     } ).catch((err) => {
       console.error('Erro ao buscar desempenho:', err);
     } ); 
-    }, []); 
+  }
+
+    const fetchPacotesAtivos = () => {
+     setIsLoadingPacotes(true);
+       pacotesAdquiridos(`/api/pacotes/ativos`, {
+         method: "GET",
+         withAuth: true,
+       })
+         .then((data) => { 
+           const d = data as PacoteAtivo[];
+           setPacotesAtivos(d);
+           if (!d || d.length === 0) {
+             setOpenSemPacotes(true);
+           }
+       })
+       .catch(() => {
+       enqueueSnackbar("Erro ao carregar pacotes adquiridos.", {
+           variant: "error",
+       });
+       })
+       .finally(() => {
+         setIsLoadingPacotes(false);
+       });
+     };
 
   return (
     <Box p={{ xs: 2, md: 4 }} maxWidth={1300} mx="auto">
@@ -62,44 +125,92 @@ export default function Dashboard() {
         >
           <Box
             component="img"
-            src="/aviao.png"
+            src={image}
             sx={{
               width: '100%',
               height: '100%',
               minHeight: 260,
+              maxHeight: 300,
               objectFit: 'cover',
             }}
           />
 
           <CardContent sx={{ p: 4 }}>
-            <Typography
-              color="primary"
-              fontWeight={800}
-              fontSize={12}
-              letterSpacing={1.2}
-            >
-              CONTAGEM REGRESSIVA
-            </Typography>
+            {isLoadingPacotes ? (
+              <>
+                <Typography
+                  color="primary"
+                  fontWeight={800}
+                  fontSize={12}
+                  letterSpacing={1.2}
+                >
+                  CARREGANDO PACOTES
+                </Typography>
 
-            <Typography variant="h5" fontWeight={800} mt={1}>
-              Próxima prova: EEAR 2024.2
-            </Typography>
+                <Box display="flex" alignItems="center" mt={2} gap={2}>
+                  <CircularProgress size={28} />
+                  <Typography fontSize={15}>
+                    Buscando seus pacotes ativos...
+                  </Typography>
+                </Box>
+              </>
+            ) : !openSemPacotes && pacotesAtivos.length > 0 ? (
+              <>
+                <Typography
+                  color="primary"
+                  fontWeight={800}
+                  fontSize={12}
+                  letterSpacing={1.2}
+                >
+                  CONTAGEM REGRESSIVA
+                </Typography>
 
-            <Typography mt={1.5} fontSize={15}>
-              📅 15 de Dezembro
-            </Typography>
+                <Typography variant="h5" fontWeight={800} mt={1}>
+                  Término do seu pacote: {formatarData(pacotesAtivos[0]?.dataExpiracao)}
+                </Typography>
 
-            <Typography color="primary" fontWeight={700} mt={1}>
-              ⏳ Faltam 45 dias para o seu objetivo
-            </Typography>
+                <Typography mt={1.5} fontSize={15}>
+                  📅 {formatarData(pacotesAtivos[0]?.dataExpiracao)}
+                </Typography>
 
-            <Button
-              variant="contained"
-              size="large"
-              sx={{ mt: 3, borderRadius: 2, px: 4 }}
-            >
-              Ver Edital
-            </Button>
+                <Typography color="primary" fontWeight={700} mt={1}>
+                  ⏳ Faltam {pacotesAtivos[0].diasRestantes} dias para o seu objetivo
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography
+                  color="primary"
+                  fontWeight={800}
+                  fontSize={12}
+                  letterSpacing={1.2}
+                >
+                  RUMO À APROVAÇÃO
+                </Typography>
+
+                <Typography variant="h5" fontWeight={800} mt={1}>
+                  Comece hoje a construir a sua vaga.
+                </Typography>
+
+                <Typography mt={1.5} fontSize={15}>
+                  Cada questão resolvida é um passo a menos entre você e o uniforme. Escolha um pacote e dê o primeiro passo agora.
+                </Typography>
+
+                <Typography color="primary" fontWeight={700} mt={1}>
+                  🚀 Disciplina hoje, aprovação amanhã.
+                </Typography>
+                <Button
+                  variant="contained"
+                  size="large"
+                  sx={{ mt: 3, borderRadius: 2, px: 4 }}
+                  onClick={() => {
+                    navigate('/pacotes')
+                  }}
+                >
+                  Comprar Pacote
+                </Button>
+              </>
+            )}
           </CardContent>
         </Grid>
       </Card>
@@ -126,13 +237,14 @@ export default function Dashboard() {
             </Typography>
 
             <Typography fontSize={16} lineHeight={1.7} mb={2}>
-              O segredo da aprovação na EEAR não é apenas saber a matéria,
-              mas <b>resolver rápido</b>. Treine sempre com tempo cronometrado,
-              focando principalmente em <b>Inglês</b> e <b>Física</b>.
+              A aprovação não vem só de estudar muito, mas de estudar <b>do jeito certo</b>.
+              Separe blocos curtos de estudo focado (25 a 40 min) e, ao final de cada bloco,
+              resolva questões recentes do seu concurso. Anote seus erros, revise-os no mesmo dia
+              e transforme-os em <b>flashcards</b> para revisar rápido amanhã.
             </Typography>
 
             <Typography color="primary" fontWeight={700}>
-              #Estratégia #EEAR #Foco
+              #Estratégia #Foco
             </Typography>
           </CardContent>
         </Card>
