@@ -120,7 +120,7 @@ export const Resultado = () => {
           <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
             <Box sx={{ minWidth: 200 }}>
               <Typography fontWeight={700} fontSize={28}>
-                {resultado ? `${Math.round(resultado.pontuacaoFinal * 100)}%` : '0%'}
+                {resultado ? `${resultado.pontuacaoFinal.toFixed(2)}%` : '0%'}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Taxa de Acerto Geral

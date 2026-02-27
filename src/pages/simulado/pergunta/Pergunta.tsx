@@ -143,8 +143,8 @@ export const Pergunta = ({
                     {option.id}
                   </Box>
 
-                  <Typography fontSize={15}>
-                    {option.label}
+                  <Typography fontSize={15} textAlign={'left'}>
+                   {option.label}
                   </Typography>
                 </Box>
 

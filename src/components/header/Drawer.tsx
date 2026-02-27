@@ -172,7 +172,7 @@ export default function PersistentDrawerLeft() {
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6" noWrap component="div">
-                Treinar +
+                Treina +
               </Typography>
             </Toolbar>
           </Grid>
