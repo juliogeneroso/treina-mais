@@ -27,6 +27,8 @@ export const Simulado = () => {
     const [ tempoEsgotado, setTempoEsgotado ] = useState(false);
     const navigate = useNavigate();
 
+    const storageKeyRespostas = simuladoAtivo ? `simulado_respostas_${simuladoAtivo.id}` : null;
+
     useEffect(() => {
         const controller = new AbortController();
 
@@ -56,6 +58,40 @@ export const Simulado = () => {
             controller.abort();
         };
     }, []);
+
+    useEffect(() => {
+        if (!storageKeyRespostas) return;
+
+        try {
+            const salvo = window.localStorage.getItem(storageKeyRespostas);
+            if (!salvo) return;
+            const parsed = JSON.parse(salvo) as Record<string, "A" | "B" | "C" | "D">;
+            const next: Record<number, "A" | "B" | "C" | "D"> = {};
+
+            Object.entries(parsed).forEach(([key, value]) => {
+                const id = Number(key);
+                if (!Number.isNaN(id) && (value === "A" || value === "B" || value === "C" || value === "D")) {
+                    next[id] = value;
+                }
+            });
+
+            if (Object.keys(next).length > 0) {
+                setRespostas(next);
+            }
+        } catch {
+            // ignore falhas de parse ou acesso ao storage
+        }
+    }, [storageKeyRespostas]);
+
+    useEffect(() => {
+        if (!storageKeyRespostas) return;
+
+        try {
+            window.localStorage.setItem(storageKeyRespostas, JSON.stringify(respostas));
+        } catch {
+            // ignore falhas de storage
+        }
+    }, [respostas, storageKeyRespostas]);
 
     const questoes: Questao[] = simuladoAtivo?.questoes ?? [];
     const totalQuestoes = questoes.length;
@@ -98,6 +134,7 @@ export const Simulado = () => {
                     }
                 }).then((data) => { 
                     window.localStorage.removeItem(`simulado_tempo_restante_${simuladoAtivo.id}`);
+                    window.localStorage.removeItem(`simulado_respostas_${simuladoAtivo.id}`);
                     const d = data as SimuladoFinalizadoResponse;
                     navigate('/simulado/resultado', { state: { resultado: d, nomeSimulado: simuladoAtivo.titulo} });
                 }).catch((err) => {

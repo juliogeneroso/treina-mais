@@ -210,7 +210,7 @@ export default function PersistentDrawerLeft() {
                 <MenuItem
                   onClick={() => {
                     setAnchorUser(null);
-                    navigate("/configuracoes");
+                    navigate("/configuracao");
                   }}
                 >
                   <SettingsIcon sx={{ fontSize: 18, mr: 1 }} /> Configurações
