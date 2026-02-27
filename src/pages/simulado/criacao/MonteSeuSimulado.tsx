@@ -32,6 +32,7 @@ const MonteSeuSimulado = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [filtros, setFiltros] = useState<FiltroSimuladoResponse[]>([]);
   const [pacoteSelecionado, setPacoteSelecionado] = useState<number | null>(null);
+  const [materiaAtiva, setMateriaAtiva] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -175,6 +176,9 @@ const MonteSeuSimulado = () => {
                     if (value !== null) {
                       setPacoteSelecionado(value as number);
                       setMateria([]);
+                      setCapitulosSelecionados([]);
+                      setSubcapitulosSelecionados([]);
+                      setMateriaAtiva(null);
                     }
                   }}
                   sx={{ flexWrap: 'wrap', gap: 1 }}
@@ -196,114 +200,182 @@ const MonteSeuSimulado = () => {
                   <MenuBookIcon color="primary" fontSize="small" /> Seleção de Matérias
                 </Typography>
                 <Grid container spacing={2}>
-                  {(pacoteAtual?.temas ?? []).map((tema) => (
-                    <Grid size={{ xs: 6, sm: 3 }} key={tema.id}>
-                      <Paper
-                        elevation={0}
-                        onClick={() =>
-                          setMateria((prev) =>
-                            prev.includes(tema.nome)
-                              ? prev.filter((t) => t !== tema.nome)
-                              : [...prev, tema.nome]
-                          )
-                        }
-                        sx={{
-                          p: 3, textAlign: 'center', cursor: 'pointer', borderRadius: 3,
-                          border: '2px solid',
-                          borderColor: materia.includes(tema.nome) ? 'primary.main' : 'divider',
-                          transition: '0.2s',
-                          '&:hover': { borderColor: 'primary.main' }
-                        }}
-                      >
-                        <Box sx={{ mb: 1, opacity: materia.includes(tema.nome) ? 1 : 0.5 }}>
-                           <MenuBookIcon color="primary" />
-                        </Box>
-                        <Typography variant="caption" fontWeight="bold">{tema.nome}</Typography>
-                      </Paper>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
+                  <Grid size={{ xs: 12 }}>
+                    <Stack spacing={1.2}>
+                      {(pacoteAtual?.temas ?? []).map((tema) => {
+                        const selecionada = materia.includes(tema.nome);
+                        const ativa = materiaAtiva === tema.nome;
 
-              {/* Capítulos */}
-              <Box>
-                <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                  Capitulos
-                </Typography>
-                <Grid container spacing={2}>
-                  {(pacoteAtual?.temas ?? [])
-                    .filter((tema) => materia.includes(tema.nome))
-                    .flatMap((tema) => tema.capitulos)
-                    .map((capitulo) => (
-                      <Grid size={{ xs: 6, sm: 3 }} key={capitulo.id}>
-                        <Paper
-                          elevation={0}
-                          onClick={() =>
-                            setCapitulosSelecionados((prev) =>
-                              prev.includes(capitulo.nome)
-                                ? prev.filter((c) => c !== capitulo.nome)
-                                : [...prev, capitulo.nome]
-                            )
-                          }
-                          sx={{
-                            p: 2,
-                            textAlign: 'center',
-                            cursor: 'pointer',
-                            borderRadius: 3,
-                            border: '2px solid',
-                            borderColor: capitulosSelecionados.includes(capitulo.nome) ? 'primary.main' : 'divider',
-                            transition: '0.2s',
-                            '&:hover': { borderColor: 'primary.main' },
-                          }}
-                        >
-                          <Typography variant="caption" fontWeight="bold">
-                            {capitulo.nome}
-                          </Typography>
-                        </Paper>
-                      </Grid>
-                    ))}
-                </Grid>
-              </Box>
+                        return (
+                          <Paper
+                            key={tema.id}
+                            elevation={0}
+                            onClick={() => setMateriaAtiva(tema.nome)}
+                            sx={{
+                              p: 1.5,
+                              cursor: 'pointer',
+                              borderRadius: 3,
+                              border: '2px solid',
+                              borderColor: ativa ? 'primary.main' : 'divider',
+                              bgcolor: ativa ? 'primary.50' : 'background.paper',
+                              transition: '0.2s',
+                              '&:hover': { borderColor: 'primary.main' }
+                            }}
+                          >
+                            <Stack direction="row" alignItems="center" spacing={1.2}>
+                              <Checkbox
+                                size="small"
+                                checked={selecionada}
+                                onClick={(e) => e.stopPropagation()}
+                                onChange={() => {
+                                  setMateria((prev) => {
+                                    const exists = prev.includes(tema.nome);
+                                    const next = exists
+                                      ? prev.filter((t) => t !== tema.nome)
+                                      : [...prev, tema.nome];
 
-              {/* Subcapítulos */}
-              <Box>
-                <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                  Subcapítulos
-                </Typography>
-                <Grid container spacing={2}>
-                  {(pacoteAtual?.temas ?? [])
-                    .filter((tema) => materia.includes(tema.nome))
-                    .flatMap((tema) => tema.capitulos)
-                    .filter((cap) => capitulosSelecionados.includes(cap.nome))
-                    .flatMap((cap) => cap.subcapitulos)
-                    .map((sub) => (
-                      <Grid size={{ xs: 6, sm: 3 }} key={sub.id}>
-                        <Paper
-                          elevation={0}
-                          onClick={() =>
-                            setSubcapitulosSelecionados((prev) =>
-                              prev.includes(sub.nome)
-                                ? prev.filter((s) => s !== sub.nome)
-                                : [...prev, sub.nome]
-                            )
-                          }
-                          sx={{
-                            p: 2,
-                            textAlign: 'center',
-                            cursor: 'pointer',
-                            borderRadius: 3,
-                            border: '2px solid',
-                            borderColor: subcapitulosSelecionados.includes(sub.nome) ? 'primary.main' : 'divider',
-                            transition: '0.2s',
-                            '&:hover': { borderColor: 'primary.main' },
-                          }}
-                        >
-                          <Typography variant="caption" fontWeight="bold">
-                            {sub.nome}
+                                    if (exists) {
+                                      const temaAtual = (pacoteAtual?.temas ?? []).find((t) => t.nome === tema.nome);
+                                      const capitulosDoTema = temaAtual?.capitulos.map((c) => c.nome) ?? [];
+                                      const subcapitulosDoTema = temaAtual?.capitulos.flatMap((c) => c.subcapitulos.map((s) => s.nome)) ?? [];
+
+                                      setCapitulosSelecionados((prevCaps) =>
+                                        prevCaps.filter((c) => !capitulosDoTema.includes(c))
+                                      );
+                                      setSubcapitulosSelecionados((prevSubs) =>
+                                        prevSubs.filter((s) => !subcapitulosDoTema.includes(s))
+                                      );
+                                    }
+
+                                    if (!exists) {
+                                      setMateriaAtiva(tema.nome);
+                                    } else if (materiaAtiva === tema.nome) {
+                                      setMateriaAtiva(next[0] ?? null);
+                                    }
+
+                                    return next;
+                                  });
+                                }}
+                              />
+                              <Box sx={{ flex: 1 }}>
+                                <Typography fontWeight={selecionada ? 800 : 600} color="text.primary">
+                                  {tema.nome}
+                                </Typography>
+                                <Typography variant="caption" color="text.secondary">
+                                  {tema.capitulos.length} capítulo{tema.capitulos.length > 1 ? 's' : ''}
+                                </Typography>
+                              </Box>
+                            </Stack>
+                          </Paper>
+                        );
+                      })}
+                    </Stack>
+                  </Grid>
+
+                  <Grid size={{ xs: 12 }}>
+                    <Paper
+                      elevation={0}
+                      sx={{
+                        p: 2.5,
+                        borderRadius: 4,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        minHeight: 220
+                      }}
+                    >
+                      {materiaAtiva ? (
+                        <Stack spacing={2}>
+                          <Typography variant="subtitle2" fontWeight="bold" color="text.primary">
+                            {materiaAtiva}
                           </Typography>
-                        </Paper>
-                      </Grid>
-                    ))}
+
+                          <Box>
+                            <Typography variant="caption" fontWeight="bold" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                              Capítulos
+                            </Typography>
+                            <Grid container spacing={1.2}>
+                              {(pacoteAtual?.temas ?? [])
+                                .find((tema) => tema.nome === materiaAtiva)
+                                ?.capitulos.map((capitulo) => (
+                                  <Grid size={{ xs: 12, sm: 6 }} key={capitulo.id}>
+                                    <Paper
+                                      elevation={0}
+                                      onClick={() =>
+                                        setCapitulosSelecionados((prev) =>
+                                          prev.includes(capitulo.nome)
+                                            ? prev.filter((c) => c !== capitulo.nome)
+                                            : [...prev, capitulo.nome]
+                                        )
+                                      }
+                                      sx={{
+                                        p: 1.2,
+                                        cursor: 'pointer',
+                                        borderRadius: 2.5,
+                                        border: '2px solid',
+                                        borderColor: capitulosSelecionados.includes(capitulo.nome) ? 'primary.main' : 'divider',
+                                        transition: '0.2s',
+                                        '&:hover': { borderColor: 'primary.main' },
+                                      }}
+                                    >
+                                      <Typography variant="caption" fontWeight="bold">
+                                        {capitulo.nome}
+                                      </Typography>
+                                    </Paper>
+                                  </Grid>
+                                ))}
+                            </Grid>
+                          </Box>
+
+                          <Box>
+                            <Typography variant="caption" fontWeight="bold" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                              Subcapítulos
+                            </Typography>
+                            <Grid container spacing={1.2}>
+                              {(pacoteAtual?.temas ?? [])
+                                .find((tema) => tema.nome === materiaAtiva)
+                                ?.capitulos
+                                .filter((cap) => capitulosSelecionados.includes(cap.nome))
+                                .flatMap((cap) => cap.subcapitulos)
+                                .map((sub) => (
+                                  <Grid size={{ xs: 12, sm: 6 }} key={sub.id}>
+                                    <Paper
+                                      elevation={0}
+                                      onClick={() =>
+                                        setSubcapitulosSelecionados((prev) =>
+                                          prev.includes(sub.nome)
+                                            ? prev.filter((s) => s !== sub.nome)
+                                            : [...prev, sub.nome]
+                                        )
+                                      }
+                                      sx={{
+                                        p: 1.2,
+                                        cursor: 'pointer',
+                                        borderRadius: 2.5,
+                                        border: '2px solid',
+                                        borderColor: subcapitulosSelecionados.includes(sub.nome) ? 'primary.main' : 'divider',
+                                        transition: '0.2s',
+                                        '&:hover': { borderColor: 'primary.main' },
+                                      }}
+                                    >
+                                      <Typography variant="caption" fontWeight="bold">
+                                        {sub.nome}
+                                      </Typography>
+                                    </Paper>
+                                  </Grid>
+                                ))}
+                            </Grid>
+                          </Box>
+                        </Stack>
+                      ) : (
+                        <Stack spacing={1} alignItems="center" justifyContent="center" sx={{ minHeight: 200 }}>
+                          <MenuBookIcon color="disabled" />
+                          <Typography variant="body2" color="text.secondary">
+                            Selecione uma matéria para ver capítulos e subcapítulos.
+                          </Typography>
+                        </Stack>
+                      )}
+                    </Paper>
+                  </Grid>
                 </Grid>
               </Box>
 
