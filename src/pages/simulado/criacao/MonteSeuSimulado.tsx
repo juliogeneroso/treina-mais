@@ -16,6 +16,7 @@ import type { RootState } from '../../../store';
 import { useAppSelector } from '../../../store/hooks';
 import type { FiltroSimuladoResponse } from '../../../interfaces/simulado/simulado.interface';
 import type { HttpError } from '../../../interfaces/error/http-error.interface';
+import { useNavigate } from 'react-router-dom';
 
      
 const MonteSeuSimulado = () => {
@@ -31,6 +32,7 @@ const MonteSeuSimulado = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [filtros, setFiltros] = useState<FiltroSimuladoResponse[]>([]);
   const [pacoteSelecionado, setPacoteSelecionado] = useState<number | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     request(`/api/simulado/filtros/${user?.id}`, {
@@ -125,7 +127,7 @@ const MonteSeuSimulado = () => {
     }).then((data) => {
       console.log('Simulado criado com sucesso:', data);
       // Redirecionar para a página do simulado ativo
-      window.location.href = '/simulado';
+      navigate('/simulado', { state: { mostrarPergunta: true } });
     }).catch((err: HttpError) => {
       enqueueSnackbar(err.message || 'Erro ao criar simulado', { variant: 'error' });
       console.error('Erro ao criar simulado:', err);

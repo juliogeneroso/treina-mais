@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Pergunta } from "./pergunta/Pergunta"
 import { useApi } from "../../services/useAPI";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Box, CircularProgress, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from "@mui/material";
 import type { SimuladoAtivoResponse, Questao } from "../../interfaces/simulado/simulado-ativo.interface";
 import SimuladoPendente from "./pendente/SimuladoPendente";
@@ -10,10 +10,16 @@ import { Temporizador } from "./temporizador/Temporizador";
 import type { SimuladoFinalizadoResponse } from "../../interfaces/simulado/responder-simulado.interface";
 import { enqueueSnackbar } from "notistack";
 
+type SimuladoLocationState = {
+    mostrarPergunta?: boolean;
+};
 export const Simulado = () => {
     const { request, isLoading } = useApi();
     const [ simuladoAtivo, setSimuladoAtivo ] = useState<SimuladoAtivoResponse | null>(null);
-    const [ mostrarPergunta, setMostrarPergunta ] = useState(false);
+    const location = useLocation();
+    const mostrarPerguntaState = Boolean((location.state as SimuladoLocationState | null)?.mostrarPergunta);
+    const mostrarPerguntaParam = new URLSearchParams(location.search).get("mostrarPergunta") === "true";
+    const [ mostrarPergunta, setMostrarPergunta ] = useState(mostrarPerguntaState || mostrarPerguntaParam);
     const [ indiceAtual, setIndiceAtual ] = useState(0);
     const [ respostas, setRespostas ] = useState<Record<number, "A" | "B" | "C" | "D">>({});
     const [ abrirConfirmacao, setAbrirConfirmacao ] = useState(false);
@@ -79,17 +85,7 @@ export const Simulado = () => {
     };
 
     const finalizarDefinitivo = () => {
-        /* {
-  "simuladoId": 9007199254740991,
-  "respostas": [
-    {
-      "questaoId": 9007199254740991,
-      "respostaUsuario": "string"
-    }
-  ]
-} */
         if (simuladoAtivo) {
-            try {
                 request(`/api/simulado/${simuladoAtivo.id}/responder`, {
                     method: 'POST',
                     withAuth: true,
@@ -105,12 +101,9 @@ export const Simulado = () => {
                     const d = data as SimuladoFinalizadoResponse;
                     navigate('/simulado/resultado', { state: { resultado: d, nomeSimulado: simuladoAtivo.titulo} });
                 }).catch((err) => {
-                    console.error('Erro ao finalizar simulado:', err);
+                    enqueueSnackbar('Responda ao menos uma questão para finalizar o simulado.', { variant: 'warning' });
+                    console.error('Erro ao finalizar simulado:', err);    
                 });
-             
-            } catch {
-                // ignore falhas de limpeza do localStorage
-            }
         }
     };
 
