@@ -18,103 +18,66 @@ import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
-import { useApi } from '../../services/useAPI';
-import type { HttpError } from '../../interfaces/error/http-error.interface';
-import type { AuthResponse } from '../../interfaces/user/response-user.interface';
-import { useAppDispatch } from '../../store/hooks';
-import { login as loginAction } from '../../auth/authSlice';
-import { useNavigate } from 'react-router-dom';
 import { useColorMode } from '../../theme';
 import image from '../../assets/image-paginal-inicial.png';
-// import GoogleIcon from '@mui/icons-material/Google';
-// import FacebookIcon from '@mui/icons-material/Facebook';
-// import AppleIcon from '@mui/icons-material/Apple';
+import { useApi } from '../../services/useAPI';
+import { enqueueSnackbar } from 'notistack';
+import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
 
-  const [showPassword, setShowPassword] = React.useState(false);  
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');   
-  const [errorEmail, setErrorEmail] = React.useState('');
-  const [errorPassword, setErrorPassword] = React.useState('');
-  const [rememberMe, setRememberMe] = React.useState(false);
-  const { request, isLoading } = useApi();
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+const CreateAccount = () => {
+
   const { mode, toggleColorMode } = useColorMode();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [nome, setNome] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [senha, setSenha] = React.useState(''); 
+  const [errorEmail, setErrorEmail] = React.useState('');
+  const [errorSenha, setErrorSenha] = React.useState('');
+  const [errorNome, setErrorNome] = React.useState('');
+  const { request, isLoading } = useApi();
 
-  React.useEffect(() => {
-    const storedEmail = window.localStorage.getItem('rememberedEmail');
-    if (storedEmail) {
-      setEmail(storedEmail);
-      setRememberMe(true);
-    }
-  }, []);
+  const navigate = useNavigate();
 
-
+  const handleNomeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNome(event.target.value);
+  } 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setEmail(value);
-    if (rememberMe) {
-      window.localStorage.setItem('rememberedEmail', value);
-    }
-  }
-
-  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {      
-    setPassword(event.target.value);
-  }
-
-  const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  }
-
-  const validatePassword = (password: string) => {
-    return password.length >= 6;
+    setEmail(event.target.value);
   } 
-
-  const handleRememberMeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const checked = event.target.checked;
-    setRememberMe(checked);
-    if (checked) {
-      window.localStorage.setItem('rememberedEmail', email);
-    } else {
-      window.localStorage.removeItem('rememberedEmail');
-    }
+  const handleSenhaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSenha(event.target.value);
   }
 
-  const login = () => {
-    // Lógica de autenticação aqui
-    validateEmail(email) ? setErrorEmail('') : setErrorEmail('E-mail inválido');
-    validatePassword(password) ? setErrorPassword('') : setErrorPassword ('A senha deve conter pelo menos 6 caracteres');
+  const createAccount = () => {
 
-    request('/auth/login', {
+    if(!nome){
+      setErrorNome('O nome é obrigatório');
+    }
+    
+    const isEmailValid = email.includes('@');
+    const isSenhaValid = senha.length >= 8;
+
+    setErrorEmail(isEmailValid ? '' : 'E-mail inválido');
+    setErrorSenha(isSenhaValid ? '' : 'A senha deve conter pelo menos 8 caracteres');
+
+    if (!isEmailValid || !isSenhaValid || !nome) {
+      return;
+    }
+
+    request('/api/usuario/create',{
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: ({ email: email , senha: password }),
-      withAuth: false
-    }).then((data) => {
-
-      const authData = data as AuthResponse;
-      const { token, refreshToken, usuario } = authData;
-      if (token && refreshToken && usuario) {
-        dispatch(
-          loginAction({
-            user: usuario,
-            accessToken: token,
-            refreshToken: refreshToken,
-          })
-        );
-      }
-
-      navigate('/dahsboard');
-    }).catch((err: HttpError) => { 
-      console.error('Login failed:', err.message);
-      setErrorPassword('Falha ao autenticar. Verifique suas credenciais.');
+      body: {
+        nome: nome, email: email, senha: senha
+    }}).then(() => {
+      // useApi só entra aqui se o HTTP status for 2xx (incluindo 200)
+      enqueueSnackbar('Conta criada com sucesso! Faça login para acessar sua conta.', { variant: 'success' });
+      navigate('/login');
+    }).catch((err: any) => {
+      console.error('Erro ao criar conta:', err);
+      enqueueSnackbar('Ocorreu um erro ao criar a conta. Tente novamente mais tarde.', { variant: 'error' });
     });
-
-
-  } 
+  }
 
   return (
     <Grid container sx={{ minHeight: '100vh', width: '100vw', padding:0, margin: 0 }}>
@@ -131,7 +94,7 @@ const Login = () => {
       >
         <Box sx={{ maxWidth: 450, textAlign: 'center' }}>
           <Typography variant="h2" fontWeight="900" gutterBottom>
-            LOGIN
+            CRIAR CONTA
           </Typography>
           <Typography variant="h5" sx={{ mb: 4, opacity: 0.9 }}>
             Acesse sua jornada de estudos
@@ -166,16 +129,41 @@ const Login = () => {
             </IconButton>
           </Box>
           <Typography variant="h4" fontWeight="900" color="text.primary" textAlign="center" gutterBottom>
-            Entrar
+            Criar Conta
           </Typography>
           <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mb: 5 }}>
             Bem-vindo! Por favor, insira seus dados para criar uma conta.
           </Typography>
 
           <Stack spacing={3}>
+             <Box>
+              <Typography variant="caption" fontWeight="bold" color="text.secondary" sx={{ ml: 1, mb: 0.5, display: 'block' }}>
+                Usuário
+              </Typography>
+              <TextField
+                fullWidth
+                variant="outlined"
+                value={nome}
+                onChange={handleNomeChange}
+                error={!!errorNome} 
+                helperText={errorNome}
+                placeholder="Seu usuário"
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <EmailRoundedIcon fontSize="small" color="disabled" />
+                      </InputAdornment>
+                    ),
+                    sx: { borderRadius: 3, bgcolor: 'action.hover' }
+                  }
+                }}
+              />
+            </Box>
+
             <Box>
               <Typography variant="caption" fontWeight="bold" color="text.secondary" sx={{ ml: 1, mb: 0.5, display: 'block' }}>
-                E-mail ou Usuário
+                E-mail
               </Typography>
               <TextField
                 fullWidth
@@ -206,10 +194,10 @@ const Login = () => {
                 fullWidth
                 type={showPassword ? 'text' : 'password'}
                 variant="outlined"
-                value={password}
-                onChange={handlePasswordChange}
-                error={!!errorPassword}
-                helperText={errorPassword}
+                value={senha}
+                onChange={handleSenhaChange}
+                error={!!errorSenha}
+                helperText={errorSenha}
                 placeholder="Sua senha"
                 slotProps={{
                   input: {
@@ -231,28 +219,12 @@ const Login = () => {
               />
             </Box>
 
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <FormControlLabel 
-                control={
-                  <Checkbox
-                    size="small"
-                    checked={rememberMe}
-                    onChange={handleRememberMeChange}
-                  />
-                }
-                label={<Typography variant="caption" color="text.secondary">Lembrar de mim</Typography>} 
-              />
-              <Link href="/recuperacao" underline="hover" sx={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#3b82f6' }}>
-                Esqueceu a senha?
-              </Link>
-            </Stack>
-
             <Button
               fullWidth
               variant="contained"
               size="large"
               loading={isLoading}
-              onClick={() => login()}
+              onClick={() => createAccount()}
               sx={{
                 py: 1.8,
                 borderRadius: 3,
@@ -264,23 +236,16 @@ const Login = () => {
                 '&:hover': { bgcolor: '#2563eb' }
               }}
             >
-              Entrar
+              Criar Conta
             </Button>
-
-            <Typography variant="body2" textAlign="center" color="text.secondary">
-              Não tem uma conta?{' '}
-              <Link href="/cadastro" underline="hover" sx={{ fontWeight: 'bold', color: '#3b82f6' }}>
-                Inscreva-se
-              </Link>
-            </Typography>
-
-            {/* <Divider sx={{ my: 2, color: '#cbd5e1', fontSize: '0.75rem' }}>LOGAR COM</Divider>
-
-            <Stack direction="row" spacing={2} justifyContent="center">
-              <IconButton sx={{ border: '1px solid #e2e8f0', p: 1.5 }}><FacebookIcon sx={{ color: '#1877F2' }} /></IconButton>
-              <IconButton sx={{ border: '1px solid #e2e8f0', p: 1.5 }}><GoogleIcon /></IconButton>
-              <IconButton sx={{ border: '1px solid #e2e8f0', p: 1.5 }}><AppleIcon sx={{ color: 'black' }} /></IconButton>
-            </Stack> */}
+            <Button
+              fullWidth
+              variant="text"
+              onClick={() => navigate('/login')}
+              sx={{ mt: 1, textTransform: 'none', fontWeight: 'bold' }}
+            >
+              Voltar para o login
+            </Button>
           </Stack>
         </Box>
       </Grid>
@@ -288,4 +253,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default CreateAccount;

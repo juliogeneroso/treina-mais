@@ -119,7 +119,6 @@ export function useApi() {
       /**
        * ❌ Tratamento correto de erro retornando JSON do backend
        */
-      console.log('Response status:', response)
       if (!response.ok) {
         let errorData: any = null
 
@@ -144,7 +143,13 @@ export function useApi() {
         return null as T
       }
 
-      return (await response.json()) as T
+      // Pode haver respostas 200/201 sem body (ou body não-JSON)
+      // Tentamos fazer parse de JSON; se não houver body ou não for JSON, tratamos como sucesso sem conteúdo.
+      try {
+        return (await response.json()) as T
+      } catch {
+        return null as T
+      }
     } catch (err: any) {
       // Ignora erros de abort (cancelamento de requisição)
       if (err?.name === 'AbortError') {
@@ -164,6 +169,7 @@ export function useApi() {
   return {
     request,
     isLoading,
-    error
+    error,
+    refreshAccessToken,
   }
 }

@@ -112,7 +112,6 @@ export const Simulado = () => {
                 // ignore falhas de limpeza do localStorage
             }
         }
-        console.log("Respostas do simulado:", respostas);
     };
 
     const handleFinalizarSimulado = () => {

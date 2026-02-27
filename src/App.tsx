@@ -15,6 +15,7 @@ import EmConstrucao from "./pages/redirecionamentos/EmConstrucao";
 import NaoEncontrado from "./pages/redirecionamentos/NaoEncontrado";
 import { Configuracao } from "./pages/meuPerfil/Configuracao";
 import { Pacotes } from "./pages/pacotes/Pacotes";
+import CreateAccount from "./pages/login/CreateAccount";
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
         <Route element={<PublicRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/recuperacao" element={<RecuperarConta />} />
-          <Route path="/planos" element={<EmConstrucao />} />
+          <Route path="/cadastro" element={<CreateAccount />} />
           
         </Route>
 

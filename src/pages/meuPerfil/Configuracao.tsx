@@ -51,7 +51,7 @@ export const Configuracao = () => {
   const [senhaErro, setSenhaErro] = useState<string | null>(null);
   const [mostrarSenhaAtual, setMostrarSenhaAtual] = useState<boolean>(false);
   const { request: atualizarImagemPerfil } = useApi();
-  const { request: atualizarPerfil } = useApi();
+  const { request: atualizarPerfil, isLoading: isLoadingAtualizarPerfil, refreshAccessToken } = useApi();
   const { request: pacotesAdquiridos } = useApi();
   const { request: cancelarCompra } = useApi();
   const navigate = useNavigate();
@@ -125,13 +125,24 @@ const fetchPacotesAtivos = () => {
         senhaAtual,
       },
     })
-      .then(() => {
+      .then(async () => {
+       
+          await refreshAccessToken()
+          .then(() => {console.log("Token atualizado após alteração de perfil")})
+          .catch(() => {
+            console.log("Falha ao atualizar token após alteração de perfil")
+            enqueueSnackbar("Perfil atualizado, mas houve um problema para atualizar sua sessão. Faça login novamente.", {
+              variant: "warning",
+            });
+          });
+      
+
         enqueueSnackbar("Perfil atualizado com sucesso.", {
           variant: "success",
         });
       })
       .catch((err) => {
-        enqueueSnackbar(err, {
+        enqueueSnackbar('Não foi possível atualizar o perfil.', {
           variant: "error",
         });
       });
@@ -323,6 +334,7 @@ const fetchPacotesAtivos = () => {
                 <Button
                   variant="contained"
                   color="primary"
+                  loading={isLoadingAtualizarPerfil}
                   onClick={handleSalvarAlteracoes}
                 >
                   Salvar Alterações
