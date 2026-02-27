@@ -141,7 +141,7 @@ const fetchPacotesAtivos = () => {
           variant: "success",
         });
       })
-      .catch((err) => {
+      .catch(() => {
         enqueueSnackbar('Não foi possível atualizar o perfil.', {
           variant: "error",
         });

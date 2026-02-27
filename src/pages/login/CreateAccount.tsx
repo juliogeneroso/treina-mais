@@ -7,10 +7,7 @@ import {
   TextField,
   Stack,
   InputAdornment,
-  IconButton,
-  Link,
-  Checkbox,
-  FormControlLabel
+  IconButton
 } from '@mui/material';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import LockRoundedIcon from '@mui/icons-material/LockRounded';

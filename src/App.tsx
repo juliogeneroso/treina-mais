@@ -11,7 +11,6 @@ import Login from "./pages/login/Login";
 import RecuperarConta from "./pages/login/RecuperarConta";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
-import EmConstrucao from "./pages/redirecionamentos/EmConstrucao";
 import NaoEncontrado from "./pages/redirecionamentos/NaoEncontrado";
 import { Configuracao } from "./pages/meuPerfil/Configuracao";
 import { Pacotes } from "./pages/pacotes/Pacotes";
