@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { AvatarSelector, avatarMap } from "./AvatarSelector";
 import { useApi } from "../../services/useAPI";
 import { enqueueSnackbar } from "notistack";
-import { setUserAvatar } from "../../auth/authSlice";
+import { setUserAvatar, setUserData } from "../../auth/authSlice";
 import { PacotesAtivos } from "./PacotesAtivos";
 import { useNavigate } from "react-router";
 import Visibility from "@mui/icons-material/Visibility";
@@ -25,6 +25,13 @@ export interface PacoteAtivo {
   nomeConcurso: string;
   dataDaProva: string;
   diasRestantes: number;
+}
+
+
+interface UserUpdateResponse {
+  id: number;
+  name: string;
+  email: string;
 }
 
 export const Configuracao = () => {
@@ -125,7 +132,7 @@ const fetchPacotesAtivos = () => {
         senhaAtual,
       },
     })
-      .then(async () => {
+      .then(async (data) => {
        
           await refreshAccessToken()
           .then(() => {console.log("Token atualizado após alteração de perfil")})
@@ -136,7 +143,9 @@ const fetchPacotesAtivos = () => {
             });
           });
       
-
+        const d = data as UserUpdateResponse;
+        dispatch(setUserData({ name: d.name, email: d.email }));
+        
         enqueueSnackbar("Perfil atualizado com sucesso.", {
           variant: "success",
         });

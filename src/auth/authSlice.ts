@@ -67,8 +67,25 @@ const authSlice = createSlice({
         localStorage.setItem('user', JSON.stringify(state.user))
       }
     },
+
+    setUserData(
+      state,
+      action: PayloadAction<{
+        name?: string
+        email?: string
+      }>
+    ) {
+      if (state.user) {
+        state.user = {
+          ...state.user,
+          ...(action.payload.name !== undefined ? { name: action.payload.name } : {}),
+          ...(action.payload.email !== undefined ? { email: action.payload.email } : {}),
+        }
+        localStorage.setItem('user', JSON.stringify(state.user))
+      }
+    },
   },
 })
-  
-export const { login, logout, setAccessToken, setAccessRefreshToken, setUserAvatar } = authSlice.actions
+
+export const { login, logout, setAccessToken, setAccessRefreshToken, setUserAvatar, setUserData } = authSlice.actions
 export default authSlice.reducer
