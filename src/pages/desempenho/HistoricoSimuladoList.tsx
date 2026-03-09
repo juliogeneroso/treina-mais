@@ -1,8 +1,11 @@
-import { Box, Card, CardContent, Chip, Grid, Typography } from '@mui/material';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Box, Button, Card, CardContent, Chip, Grid, Typography } from '@mui/material';
 import type { HistoricoSimuladoResponse } from './Desempenho';
+import { useNavigate } from 'react-router-dom';
 
 interface HistoricoSimuladoListProps {
   data: HistoricoSimuladoResponse | null;
+  loading: boolean;
 }
 
 function formatDate(dateString: string) {
@@ -31,8 +34,10 @@ function getStatusColor(status: string) {
   return 'default';
 }
 
-export default function HistoricoSimuladoList({ data }: HistoricoSimuladoListProps) {
-  if (data === null) {
+export default function HistoricoSimuladoList({ data, loading }: HistoricoSimuladoListProps) {
+  const navigate = useNavigate();
+
+  if (loading) {
     return (
       <Box>
         <Typography color="text.secondary">
@@ -42,7 +47,7 @@ export default function HistoricoSimuladoList({ data }: HistoricoSimuladoListPro
     );
   }
 
-  if (!data.length) {
+  if (!data?.length) {
     return (
       <Box>
         <Typography color="text.secondary">
@@ -98,6 +103,23 @@ export default function HistoricoSimuladoList({ data }: HistoricoSimuladoListPro
                 <Typography variant="body2" color="text.secondary">
                   Pontuação: <strong>{item.pontuacaoFinal.toFixed(1)}%</strong>
                 </Typography>
+              </Box>
+
+              <Box display="flex" justifyContent="flex-end" mt={2}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  sx={{ borderRadius: 2 }}
+                  onClick={() =>
+                    navigate('/simulado/resultado', {
+                      state: {
+                        id: item.id,
+                      },
+                    })
+                  }
+                >
+                  Ver resultado
+                </Button>
               </Box>
             </CardContent>
           </Card>

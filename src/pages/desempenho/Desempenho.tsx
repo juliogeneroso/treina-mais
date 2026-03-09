@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Box,
   Card,
@@ -92,7 +93,7 @@ const avatarMap: Record<string, string> = {
 
 export default function Desempenho() {
   const { request } = useApi();
-  const { request: historicoSimulado } = useApi();
+  const { request: historicoSimulado, isLoading: historicoSimuladoLoading } = useApi();
   const [desempenhoData, setDesempenhoData] = useState<DesempenhoResponse | null>(null);
   const [historicoSimuladoData, setHistoricoSimuladoData] = useState<HistoricoSimuladoResponse | null>(null);
   const user = useAppSelector((state: RootState) => (state as any).auth.user);
@@ -461,7 +462,7 @@ export default function Desempenho() {
 
       {tabValue === 1 && (
         <Box mt={3}>
-          <HistoricoSimuladoList data={historicoSimuladoData} />
+          <HistoricoSimuladoList data={historicoSimuladoData} loading={historicoSimuladoLoading} />
         </Box>
       )}
 

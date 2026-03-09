@@ -50,6 +50,7 @@ const SimuladoPendente = ({ data, onContinuar }: SimuladoPendenteProps) => {
     request(`/api/simulado/delete/${data.id}`, { method: 'DELETE', withAuth: true }).then(() => {
       try {
         window.localStorage.removeItem(`simulado_tempo_restante_${data.id}`);
+        window.localStorage.removeItem(`simulado_respostas_${data.id}`);
       } catch {
         // ignore falhas ao limpar o tempo salvo
       }
@@ -126,7 +127,7 @@ const SimuladoPendente = ({ data, onContinuar }: SimuladoPendenteProps) => {
                 <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
                   <AssignmentLateRoundedIcon sx={{ fontSize: 12, color: 'primary.main' }} />
                   <Typography variant="caption" fontWeight="bold" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: 1 }}>
-                    Questões Restantes
+                    Questões
                   </Typography>
                 </Stack>
                 <Typography variant="h4" fontWeight="900" color="text.primary">

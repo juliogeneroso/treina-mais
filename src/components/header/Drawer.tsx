@@ -23,8 +23,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import Grid from "@mui/material/Grid";
 import { Menu, MenuItem } from "@mui/material";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { Badge, Avatar } from "@mui/material";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+import {  Avatar } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -120,9 +119,7 @@ export default function PersistentDrawerLeft() {
   const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(false);
   const isAdmin = false; // mudar aqui
-  const [anchorNotif, setAnchorNotif] = React.useState<null | HTMLElement>(
-    null
-  );
+
   const [anchorUser, setAnchorUser] = React.useState<null | HTMLElement>(null);
 
   const handleDrawerOpen = () => {
@@ -166,7 +163,7 @@ export default function PersistentDrawerLeft() {
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6" noWrap component="div">
-                Treinar +
+                Treina +
               </Typography>
             </Toolbar>
           </Grid>
@@ -183,24 +180,7 @@ export default function PersistentDrawerLeft() {
                   <DarkModeIcon fontSize="small" />
                 )}
               </IconButton>
-              {/* <IconButton
-                color="inherit"
-                onClick={(e) => setAnchorNotif(e.currentTarget)}
-              >
-                <Badge badgeContent={3} color="error">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
-
-              <Menu
-                anchorEl={anchorNotif}
-                open={Boolean(anchorNotif)}
-                onClose={() => setAnchorNotif(null)}
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                transformOrigin={{ vertical: "top", horizontal: "right" }}
-              >
-                <MenuItem onClick={() => setAnchorNotif(null)}></MenuItem>
-              </Menu> */}
+             
 
               <IconButton
                 color="inherit"
@@ -221,7 +201,7 @@ export default function PersistentDrawerLeft() {
                 <MenuItem
                   onClick={() => {
                     setAnchorUser(null);
-                    navigate("/configuracoes");
+                    navigate("/configuracao");
                   }}
                 >
                   <SettingsIcon sx={{ fontSize: 18, mr: 1 }} /> Configurações
