@@ -15,19 +15,48 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { SimuladoFinalizadoResponse } from "../../../interfaces/simulado/responder-simulado.interface";
+import { useEffect, useState } from "react";
+import { useApi } from "../../../services/useAPI";
 
 interface ResultadoLocationState {
   resultado: SimuladoFinalizadoResponse | null;
   nomeSimulado: string;
+  id?: number;
 }
 
 export const Resultado = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const state = (location.state || {}) as ResultadoLocationState;
+  const { request } = useApi();
 
-  const resultado = state.resultado ?? null;
+  const [resultado, setResultado] = useState<SimuladoFinalizadoResponse | null>(
+    state.resultado ?? null
+  );
+  const [carregandoResultado, setCarregandoResultado] = useState(false);
+  const [erroResultado, setErroResultado] = useState<string | null>(null);
   const nomeSimulado = state.nomeSimulado ?? "";
+
+  useEffect(() => {
+    if (resultado || !state.id) return;
+
+    setCarregandoResultado(true);
+    setErroResultado(null);
+
+    request<SimuladoFinalizadoResponse>(`/api/simulado/${state.id}/resultado`, {
+      method: "GET",
+      withAuth: true,
+    })
+      .then((data) => {
+        setResultado(data);
+      })
+      .catch(() => {
+        setErroResultado("Não foi possível carregar o resultado do simulado.");
+      })
+      .finally(() => {
+        setCarregandoResultado(false);
+      });
+  }, [request, resultado, state.id]);
 
   const percentual = resultado ? Math.round(resultado.pontuacaoFinal * 100) : 0;
 
@@ -99,6 +128,16 @@ export const Resultado = () => {
           <Typography variant="body2" color="text.secondary">
             {nomeSimulado}
           </Typography>
+          {carregandoResultado && (
+            <Typography variant="caption" color="text.secondary">
+              Carregando resultado...
+            </Typography>
+          )}
+          {erroResultado && (
+            <Typography variant="caption" color="error">
+              {erroResultado}
+            </Typography>
+          )}
         </Box>
 
         <Button
