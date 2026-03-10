@@ -10,6 +10,7 @@ const API_URL = import.meta.env.VITE_API_URL
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
 
+
 interface RequestOptions {
   method?: HttpMethod
   body?: unknown
