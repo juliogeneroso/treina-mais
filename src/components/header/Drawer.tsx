@@ -28,7 +28,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
-import { Analytics, AutoAwesomeMotion, Dashboard, EditNote, Settings, Star } from "@mui/icons-material";
+import { Analytics, AutoAwesomeMotion, Dashboard, Download, EditNote, Settings, Star } from "@mui/icons-material";
 import avatar01 from "../../assets/avatar/avatar_01.png";
 import avatar02 from "../../assets/avatar/avatar_02.png";
 import avatar03 from "../../assets/avatar/avatar_03.png";
@@ -190,6 +190,17 @@ export default function PersistentDrawerLeft() {
                 )}
               </IconButton>
              
+
+              <IconButton
+                color="inherit"
+                component="a"
+                href="/treina-mais.apk"
+                download
+                sx={{ mr: 1 }}
+                aria-label="Baixar APK"
+              >
+                <Download fontSize="small" />
+              </IconButton>
 
               <IconButton
                 color="inherit"

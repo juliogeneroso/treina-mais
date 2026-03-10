@@ -10,7 +10,8 @@ import {
   IconButton,
   Link,
   Checkbox,
-  FormControlLabel
+  FormControlLabel,
+  Tooltip
 } from '@mui/material';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import LockRoundedIcon from '@mui/icons-material/LockRounded';
@@ -18,6 +19,7 @@ import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
+import Download from '@mui/icons-material/Download';
 import { useApi } from '../../services/useAPI';
 import type { HttpError } from '../../interfaces/error/http-error.interface';
 import type { AuthResponse } from '../../interfaces/user/response-user.interface';
@@ -273,6 +275,45 @@ const Login = () => {
                 Inscreva-se
               </Link>
             </Typography>
+
+            <Tooltip
+              arrow
+              placement="top"
+              title={
+                <Box sx={{ p: 0.5 }}>
+                  <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
+                    Instalar de fontes desconhecidas
+                  </Typography>
+                  <Typography variant="body2">
+                    1) Baixe o APK.
+                  </Typography>
+                  <Typography variant="body2">
+                    2) Abra o arquivo e toque em “Configurações”.
+                  </Typography>
+                  <Typography variant="body2">
+                    3) Ative “Permitir desta fonte” e instale.
+                  </Typography>
+                </Box>
+              }
+            >
+              <Button
+                fullWidth
+                variant="outlined"
+                size="large"
+                component="a"
+                href="/treina-mais.apk"
+                download
+                startIcon={<Download />}
+                sx={{
+                  py: 1.6,
+                  borderRadius: 3,
+                  textTransform: 'none',
+                  fontWeight: 'bold',
+                }}
+              >
+                Baixar APK
+              </Button>
+            </Tooltip>
 
             {/* <Divider sx={{ my: 2, color: '#cbd5e1', fontSize: '0.75rem' }}>LOGAR COM</Divider>
 
