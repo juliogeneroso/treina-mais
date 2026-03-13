@@ -231,6 +231,7 @@ const fetchPacotesAtivos = () => {
         Aqui você pode configurar suas preferências e informações pessoais.
       </Typography>
 
+
       <Box
         mt={2}
         display="flex"
@@ -364,6 +365,36 @@ const fetchPacotesAtivos = () => {
       ) : (
         <PacotesAtivos pacotes={pacotesAtivos} onComprarMaisPacotes={onComprarMaisPacotes} onCancelarCompra={cancelarPacote}/>
       )}
+
+      
+      <Box mb={4} mt={10} display="flex" flexDirection="column" gap={1.5}>
+        <Typography variant="subtitle1" fontWeight={600}>
+          Documentos e termos
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Faça o download dos termos abaixo para consultar quando quiser.
+        </Typography>
+        <Box display="flex" flexWrap="wrap" gap={1.5} mt={0.5}>
+          <Button
+            variant="outlined"
+            color="primary"
+            component="a"
+            href="/Termos%20de%20uso%20-%20Treina+.pdf"
+            download
+          >
+            Baixar Termos de Uso
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            component="a"
+            href="/Termos%20de%20compra%20-%20Treina+.pdf"
+            download
+          >
+            Baixar Termos de Compra
+          </Button>
+        </Box>
+      </Box>
 
       <Dialog open={openSemPacotes} onClose={() => setOpenSemPacotes(false)}>
         <DialogTitle>Nenhum pacote ativo encontrado</DialogTitle>

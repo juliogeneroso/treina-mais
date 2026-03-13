@@ -6,6 +6,9 @@ import {
   Button,
   TextField,
   Stack,
+  Checkbox,
+  FormControlLabel,
+  Link,
   InputAdornment,
   IconButton
 } from '@mui/material';
@@ -32,6 +35,7 @@ const CreateAccount = () => {
   const [errorEmail, setErrorEmail] = React.useState('');
   const [errorSenha, setErrorSenha] = React.useState('');
   const [errorNome, setErrorNome] = React.useState('');
+  const [aceitouTermos, setAceitouTermos] = React.useState(false);
   const { request, isLoading } = useApi();
 
   const navigate = useNavigate();
@@ -59,6 +63,11 @@ const CreateAccount = () => {
     setErrorSenha(isSenhaValid ? '' : 'A senha deve conter pelo menos 8 caracteres');
 
     if (!isEmailValid || !isSenhaValid || !nome) {
+      return;
+    }
+
+    if (!aceitouTermos) {
+      enqueueSnackbar('Você precisa aceitar os termos de uso.', { variant: 'warning' });
       return;
     }
 
@@ -216,11 +225,32 @@ const CreateAccount = () => {
               />
             </Box>
 
+            <FormControlLabel
+              sx={{ alignItems: 'center', mt: 0 }}
+              control={
+                <Checkbox
+                  checked={aceitouTermos}
+                  onChange={(event) => setAceitouTermos(event.target.checked)}
+                  color="primary"
+                />
+              }
+              label={
+                <Typography variant="body2" color="text.secondary">
+                  Li e concordo com os{' '}
+                  <Link href="/Termos%20de%20uso%20-%20Treina+.pdf" download underline="hover">
+                    Termos de Uso
+                  </Link>
+                  .
+                </Typography>
+              }
+            />
+
             <Button
               fullWidth
               variant="contained"
               size="large"
               loading={isLoading}
+              disabled={!aceitouTermos || isLoading}
               onClick={() => createAccount()}
               sx={{
                 py: 1.8,

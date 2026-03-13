@@ -18,6 +18,9 @@ import {
     DialogActions,
     Tabs,
     Tab,
+    Checkbox,
+    FormControlLabel,
+    Link,
 } from "@mui/material";
 
 interface Pacote {
@@ -67,6 +70,7 @@ export const Pacotes = () => {
     const [pacoteSelecionado, setPacoteSelecionado] = useState<Pacote | null>(null);
     const [metodoPagamento, setMetodoPagamento] = useState<"pix" | "credito" | "debito">("pix");
     const [tempoRestanteSegundos, setTempoRestanteSegundos] = useState<number | null>(null);
+    const [termosCompraAceitos, setTermosCompraAceitos] = useState<Record<number, boolean>>({});
     const { request: pacotes, isLoading } = useApi();
     const { request: validarCupom, isLoading: isValidandoCupom } = useApi();
     const { request: adquirirPacote, isLoading: isAdquirindoPacote } = useApi();
@@ -427,12 +431,46 @@ export const Pacotes = () => {
                                         </Button>
                                     </Box>
                                 )}
+                                {!pacote.jaAdquirido && !usuarioPossuiAlgumPacote && (
+                                    <FormControlLabel
+                                        sx={{ alignItems: "center", mt: 1 }}
+                                        control={
+                                            <Checkbox
+                                                checked={!!termosCompraAceitos[pacote.id]}
+                                                onChange={(event) =>
+                                                    setTermosCompraAceitos((prev) => ({
+                                                        ...prev,
+                                                        [pacote.id]: event.target.checked,
+                                                    }))
+                                                }
+                                                color="primary"
+                                            />
+                                        }
+                                        label={
+                                            <Typography variant="body2" color="text.secondary">
+                                                Li e concordo com os{" "}
+                                                <Link
+                                                    href="/Termos%20de%20compra%20-%20Treina+.pdf"
+                                                    download
+                                                    underline="hover"
+                                                >
+                                                    Termos de Compra
+                                                </Link>
+                                                .
+                                            </Typography>
+                                        }
+                                    />
+                                )}
                                 <Button
                                     sx={{ marginTop: 2 }}
                                     fullWidth
                                     variant={pacote.jaAdquirido ? "outlined" : "contained"}
                                     color={"success"}
-                                    disabled={pacote.jaAdquirido || usuarioPossuiAlgumPacote}
+                                    disabled={
+                                        pacote.jaAdquirido ||
+                                        usuarioPossuiAlgumPacote ||
+                                        !termosCompraAceitos[pacote.id]
+                                    }
                                     onClick={() => handleAbrirModalPagamento(pacote)}
                                 >
                                     {pacote.jaAdquirido ? "Já está no seu acesso" : "Comprar agora"}
