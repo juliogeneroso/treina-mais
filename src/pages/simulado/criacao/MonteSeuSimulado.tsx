@@ -33,6 +33,7 @@ const MonteSeuSimulado = () => {
   const [filtros, setFiltros] = useState<FiltroSimuladoResponse[]>([]);
   const [pacoteSelecionado, setPacoteSelecionado] = useState<number | null>(null);
   const [materiaAtiva, setMateriaAtiva] = useState<string | null>(null);
+  const [subcapitulosEmDestaque, setSubcapitulosEmDestaque] = useState<Record<number, boolean>>({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -149,6 +150,35 @@ const MonteSeuSimulado = () => {
   }
 
   const pacoteAtual = filtros.find((p) => p.pacoteId === pacoteSelecionado) || null;
+
+  const destacarSubcapitulosDoCapitulo = (capituloId: number) => {
+    const temaComCapitulo = (pacoteAtual?.temas ?? [])
+      .find((t) => t.capitulos.some((c) => c.id === capituloId));
+
+    const capitulo = temaComCapitulo?.capitulos.find((c) => c.id === capituloId);
+    if (!capitulo) return;
+
+    const subIds = capitulo.subcapitulos.map((s) => s.id);
+    if (subIds.length === 0) return;
+
+    setSubcapitulosEmDestaque((prev) => {
+      const next = { ...prev };
+      subIds.forEach((id) => {
+        next[id] = true;
+      });
+      return next;
+    });
+
+    window.setTimeout(() => {
+      setSubcapitulosEmDestaque((prev) => {
+        const next = { ...prev };
+        subIds.forEach((id) => {
+          next[id] = false;
+        });
+        return next;
+      });
+    }, 500);
+  };
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 5 }}>
@@ -301,11 +331,15 @@ const MonteSeuSimulado = () => {
                                     <Paper
                                       elevation={0}
                                       onClick={() =>
-                                        setCapitulosSelecionados((prev) =>
-                                          prev.includes(capitulo.nome)
+                                        setCapitulosSelecionados((prev) => {
+                                          const jaSelecionado = prev.includes(capitulo.nome);
+                                          const atualizado = jaSelecionado
                                             ? prev.filter((c) => c !== capitulo.nome)
-                                            : [...prev, capitulo.nome]
-                                        )
+                                            : [...prev, capitulo.nome];
+
+                                          destacarSubcapitulosDoCapitulo(capitulo.id);
+                                          return atualizado;
+                                        })
                                       }
                                       sx={{
                                         p: 1.2,
@@ -353,7 +387,11 @@ const MonteSeuSimulado = () => {
                                         borderRadius: 2.5,
                                         border: '2px solid',
                                         borderColor: subcapitulosSelecionados.includes(sub.nome) ? 'primary.main' : 'divider',
-                                        transition: '0.2s',
+                                        bgcolor: subcapitulosEmDestaque[sub.id] ? 'primary.50' : 'background.paper',
+                                        boxShadow: subcapitulosEmDestaque[sub.id]
+                                          ? '0 0 0 2px rgba(59,130,246,0.35)'
+                                          : 'none',
+                                        transition: 'background-color 0.25s ease, box-shadow 0.25s ease, border-color 0.2s ease',
                                         '&:hover': { borderColor: 'primary.main' },
                                       }}
                                     >

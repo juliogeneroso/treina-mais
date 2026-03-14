@@ -184,7 +184,12 @@ export default function Desempenho() {
         <Button
           variant="contained"
           size="large"
-          sx={{ borderRadius: 3, px: 4 }}
+          fullWidth
+          sx={{
+            borderRadius: 3,
+            px: { xs: 2, md: 4 },
+            alignSelf: { xs: 'stretch', md: 'auto' },
+          }}
           onClick={() => {
             navigate('/simulado');
           }}
@@ -247,7 +252,7 @@ export default function Desempenho() {
             color: 'warning.main',
           },
         ].map((item, index) => (
-          <Grid sx={{ xs: 12, md: 3, sm: 6 }} key={index}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
             <Card
               sx={{
                 height: '100%',
@@ -387,7 +392,7 @@ export default function Desempenho() {
               : 'error.main';
 
           return (
-            <Grid key={index} sx={{ xs: 12, md: 6 }}>
+            <Grid key={index} size={{ xs: 12, md: 6 }}>
               <Card
                 sx={{
                   borderRadius: 4,

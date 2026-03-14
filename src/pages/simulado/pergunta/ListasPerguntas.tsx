@@ -1,4 +1,4 @@
-import { Box, Typography, Stack, Card, CardContent, Button } from "@mui/material";
+import { Box, Typography, Stack, Card, CardContent, Button, useMediaQuery, useTheme } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import type { Questao } from "../../../interfaces/simulado/simulado-ativo.interface";
 
@@ -19,17 +19,23 @@ export const ListasPerguntas = ({
   onIrParaQuestao,
   onFinalizarSimulado,
 }: ListasPerguntasProps) => {
+  const theme = useTheme();
+  const isFullWidth = useMediaQuery(theme.breakpoints.down("md"));
+  const maxChars = isFullWidth ? 80 : 50;
+
   return (
     <Box
       sx={{
-        flexBasis: "20%",
+        flexBasis: { xs: "100%", lg: "20%" },
         flexShrink: 0,
-        maxWidth: 320,
-        height: "100%",
-        overflowY: "auto",
-        borderLeft: "1px solid",
+        maxWidth: { xs: "100%", lg: 320 },
+        height: { xs: "auto", lg: "100%" },
+        overflowY: { xs: "visible", lg: "auto" },
+        borderLeft: { xs: "none", lg: "1px solid" },
+        borderTop: { xs: "1px solid", lg: "none" },
         borderColor: "divider",
-        pl: 2,
+        pl: { xs: 0, lg: 2 },
+        pt: { xs: 2, lg: 0 },
       }}
     >
       <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
@@ -62,7 +68,9 @@ export const ListasPerguntas = ({
                   justifyContent: "space-between",
                 }}
               >
-                <Typography variant="body2">Questão {index + 1} - {q.enunciado.substring(0, 50)}...</Typography>
+                <Typography variant="body2">
+                  Questão {index + 1} - {q.enunciado.length > maxChars ? `${q.enunciado.substring(0, maxChars)}...` : q.enunciado}
+                </Typography>
                 {respondida && (
                   <CheckCircleIcon
                     color={atual ? "inherit" : "success"}

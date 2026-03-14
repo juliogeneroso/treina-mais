@@ -25,6 +25,7 @@ export const Simulado = () => {
     const [ abrirConfirmacao, setAbrirConfirmacao ] = useState(false);
     const [ faltantes, setFaltantes ] = useState(0);
     const [ tempoEsgotado, setTempoEsgotado ] = useState(false);
+    const [ mostrarListaMobile, setMostrarListaMobile ] = useState(false);
     const navigate = useNavigate();
 
     const storageKeyRespostas = simuladoAtivo ? `simulado_respostas_${simuladoAtivo.id}` : null;
@@ -212,19 +213,18 @@ export const Simulado = () => {
                 <Box
                     sx={{
                         display: "flex",
-                        gap: 3,
-                        alignItems: { xs: "stretch", md: "flex-start" },
-                        flexDirection: { xs: "column", md: "row" },
-                        height: { xs: "auto", md: "calc(100vh - 160px)" },
+                        gap: { xs: 2, md: 3 },
+                        alignItems: "stretch",
+                        flexDirection: { xs: "column", lg: "row" },
                     }}
                 >
                     <Box
                         sx={{
-                            flexBasis: { xs: "100%", md: "80%" },
+                            flexBasis: { xs: "100%", lg: "75%" },
                             flexShrink: 0,
-                            pr: { xs: 0, md: 2 },
-                            overflowY: "auto",
+                            pr: { xs: 0, lg: 2 },
                             display: "flex",
+                            flexDirection: "column",
                             gap: 2,
                         }}
                     >
@@ -264,14 +264,59 @@ export const Simulado = () => {
                       
                     </Box>
 
-                    {/* Lista lateral de questões (20%) */}
-                    <ListasPerguntas
-                        questoes={questoes}
-                        indiceAtual={indiceAtual}
-                        respostas={respostas}
-                        onIrParaQuestao={irParaQuestao}
-                        onFinalizarSimulado={handleFinalizarSimulado}
-                    />
+                    {/* Lista lateral de questões */}
+                    {/* Desktop / telas grandes: lista fixa à direita */}
+                    <Box
+                        sx={{
+                            display: { xs: "none", lg: "block" },
+                            flexBasis: "25%",
+                            flexShrink: 0,
+                        }}
+                    >
+                        <ListasPerguntas
+                            questoes={questoes}
+                            indiceAtual={indiceAtual}
+                            respostas={respostas}
+                            onIrParaQuestao={irParaQuestao}
+                            onFinalizarSimulado={handleFinalizarSimulado}
+                        />
+                    </Box>
+
+                    {/* Mobile / tablets: lista colapsada em botão */}
+                    <Box
+                        sx={{
+                            display: { xs: "block", lg: "none" },
+                            width: "100%",
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                mt: 1,
+                                mb: 1,
+                                display: "flex",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                onClick={() => setMostrarListaMobile(prev => !prev)}
+                            >
+                                {mostrarListaMobile ? "Ocultar lista de questões" : "Ver lista de questões"}
+                            </Button>
+                        </Box>
+                        {mostrarListaMobile && (
+                            <Box sx={{ mt: 1 }}>
+                                <ListasPerguntas
+                                    questoes={questoes}
+                                    indiceAtual={indiceAtual}
+                                    respostas={respostas}
+                                    onIrParaQuestao={irParaQuestao}
+                                    onFinalizarSimulado={handleFinalizarSimulado}
+                                />
+                            </Box>
+                        )}
+                    </Box>
                 </Box>
 
                 <Dialog

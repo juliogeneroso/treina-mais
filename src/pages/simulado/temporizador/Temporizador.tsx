@@ -75,9 +75,9 @@ export const Temporizador = ({ simuladoId, duracaoTotalSegundos, onTempoEsgotado
     return (
         <Box
             sx={{
-                flexBasis: "20%",
+                flexBasis: { xs: "100%", md: "20%" },
                 flexShrink: 0,
-                maxWidth: 250,
+                maxWidth: { xs: "100%", md: 250 },
             }}
         >
             <Card

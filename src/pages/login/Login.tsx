@@ -66,6 +66,15 @@ const Login = () => {
     setPassword(event.target.value);
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (!isLoading) {
+        login();
+      }
+    }
+  };
+
   const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
@@ -184,6 +193,7 @@ const Login = () => {
                 variant="outlined"
                 value={email}
                 onChange={handleEmailChange}
+                onKeyDown={handleKeyDown}
                 error={!!errorEmail} 
                 helperText={errorEmail}
                 placeholder="exemplo@email.com"
@@ -210,6 +220,7 @@ const Login = () => {
                 variant="outlined"
                 value={password}
                 onChange={handlePasswordChange}
+                onKeyDown={handleKeyDown}
                 error={!!errorPassword}
                 helperText={errorPassword}
                 placeholder="Sua senha"

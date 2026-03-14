@@ -114,11 +114,13 @@ export const Resultado = () => {
   const mensagemFinal = getMensagemFinal(percentual);
 
   return (
-    <Box sx={{ maxWidth: 1100, mx: "auto", p: 4 }}>
+    <Box sx={{ maxWidth: 1100, mx: "auto", p: { xs: 2, md: 4 } }}>
       <Box
         display="flex"
         justifyContent="space-between"
-        alignItems="center"
+        alignItems={{ xs: "flex-start", sm: "center" }}
+        flexDirection={{ xs: "column", sm: "row" }}
+        gap={{ xs: 2, sm: 0 }}
         mb={4}
       >
         <Box>
@@ -143,7 +145,8 @@ export const Resultado = () => {
         <Button
           variant="outlined"
           startIcon={<ArrowBackIcon />}
-          sx={{ borderRadius: 2 }}
+          sx={{ borderRadius: 2, mt: { xs: 1, sm: 0 }, alignSelf: { xs: "stretch", sm: "auto" } }}
+          fullWidth
           onClick={() => navigate("/dashboard")}
         >
           Voltar ao Início
@@ -246,8 +249,15 @@ export const Resultado = () => {
               }}
             >
               <CardContent>
-                <Box display="flex" justifyContent="space-between" mb={1}>
-                  <Box display="flex" gap={2} alignItems="center">
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems={{ xs: "flex-start", sm: "center" }}
+                  flexDirection={{ xs: "column", sm: "row" }}
+                  gap={{ xs: 1, sm: 0 }}
+                  mb={1}
+                >
+                  <Box display="flex" gap={2} alignItems="center" flexWrap="wrap">
                     <Chip label={String(index + 1).padStart(2, "0")} color={chipColor} />
                     <Typography fontWeight={600}>
                       Questão {index + 1}
@@ -260,7 +270,7 @@ export const Resultado = () => {
                     />
                   </Box>
 
-                  <Typography variant="body2">
+                  <Typography variant="body2" sx={{ mt: { xs: 0.5, sm: 0 } }}>
                     Sua resposta <b>[{fb.respostaUsuario}]</b> · Gabarito <b>[{fb.respostaCorreta}]</b>
                   </Typography>
                 </Box>
@@ -301,7 +311,9 @@ export const Resultado = () => {
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "center",
+            alignItems: { xs: "flex-start", md: "center" },
+            flexDirection: { xs: "column", md: "row" },
+            gap: { xs: 2, md: 0 },
           }}
         >
           <Box>
@@ -322,7 +334,9 @@ export const Resultado = () => {
               fontWeight: 700,
               borderRadius: 2,
               "&:hover": { bgcolor: "action.hover" },
+              alignSelf: { xs: "stretch", md: "auto" },
             }}
+            fullWidth
             onClick={() => {
               navigate('/flashcard');
             }}
