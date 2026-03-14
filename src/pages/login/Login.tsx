@@ -312,7 +312,7 @@ const Login = () => {
                 variant="outlined"
                 size="large"
                 component="a"
-                href="/treina-mais.apk"
+                href="/treina-mais1.0.1.apk"
                 download
                 startIcon={<Download />}
                 sx={{

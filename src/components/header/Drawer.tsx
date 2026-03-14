@@ -194,7 +194,7 @@ export default function PersistentDrawerLeft() {
               <IconButton
                 color="inherit"
                 component="a"
-                href="/treina-mais.apk"
+                href="/treina-mais1.0.1.apk"
                 download
                 sx={{ mr: 1 }}
                 aria-label="Baixar APK"
