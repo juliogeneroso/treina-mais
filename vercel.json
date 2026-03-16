@@ -1,8 +1,6 @@
 {
-  "rewrites": [
-    {
-      "source": "/((?!.*\\.(pdf|png|jpg|jpeg|gif|svg|ico|js|css|woff|woff2|ttf|eot)).*)",
-      "destination": "/index.html"
-    }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
