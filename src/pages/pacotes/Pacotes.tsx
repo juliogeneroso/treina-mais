@@ -444,7 +444,7 @@ export const Pacotes = () => {
                                                     }))
                                                 }
                                                 color="primary"
-                                            />
+                                            /> 
                                         }
                                         label={
                                             <Typography variant="body2" color="text.secondary">
