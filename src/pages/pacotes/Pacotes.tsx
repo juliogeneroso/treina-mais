@@ -450,7 +450,7 @@ export const Pacotes = () => {
                                             <Typography variant="body2" color="text.secondary">
                                                 Li e concordo com os{" "}
                                                 <Link
-                                                    href="/Termos%20de%20compra%20-%20Treina+.pdf"
+                                                    href="/termos-de-compra.pdf"
                                                     download
                                                     underline="hover"
                                                 >

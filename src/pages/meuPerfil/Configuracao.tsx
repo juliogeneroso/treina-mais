@@ -379,7 +379,7 @@ const fetchPacotesAtivos = () => {
             variant="outlined"
             color="primary"
             component="a"
-            href="/Termos%20de%20uso%20-%20Treina+.pdf"
+            href="/termos-de-uso.pdf"
             download
           >
             Baixar Termos de Uso
@@ -388,7 +388,7 @@ const fetchPacotesAtivos = () => {
             variant="outlined"
             color="primary"
             component="a"
-            href="/Termos%20de%20compra%20-%20Treina+.pdf"
+            href="/termos-de-compra.pdf"
             download
           >
             Baixar Termos de Compra

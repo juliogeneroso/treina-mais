@@ -237,7 +237,7 @@ const CreateAccount = () => {
               label={
                 <Typography variant="body2" color="text.secondary">
                   Li e concordo com os{' '}
-                  <Link href="/Termos%20de%20uso%20-%20Treina+.pdf" download underline="hover">
+                  <Link href="/termos-de-uso.pdf" download underline="hover">
                     Termos de Uso
                   </Link>
                   .
