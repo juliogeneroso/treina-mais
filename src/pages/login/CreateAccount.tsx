@@ -24,7 +24,7 @@ import { useApi } from '../../services/useAPI';
 import { enqueueSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 
-
+// Página de criação de conta para novos usuários
 const CreateAccount = () => {
 
   const { mode, toggleColorMode } = useColorMode();
