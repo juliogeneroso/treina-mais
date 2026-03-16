@@ -1,8 +1,6 @@
 {
   "routes": [
     { "handle": "filesystem" },
-    { "src": "/Termos%20de%20uso%20-%20Treina+.pdf", "dest": "/Termos de uso - Treina+.pdf" },
-    { "src": "/Termos%20de%20compra%20-%20Treina+.pdf", "dest": "/Termos de compra - Treina+.pdf" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
